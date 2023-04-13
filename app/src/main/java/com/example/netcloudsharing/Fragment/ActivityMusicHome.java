@@ -39,7 +39,7 @@ public class ActivityMusicHome extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_music_home);
+        setContentView(R.layout.activity_local_music_list);
         initView();
 
         mData = new ArrayList<>();
@@ -120,8 +120,10 @@ public class ActivityMusicHome extends AppCompatActivity implements View.OnClick
         nextIv = findViewById(R.id.local_music_bottom_ivNext);
         playIv = findViewById(R.id.local_music_bottom_ivPlay);
         lastIv = findViewById(R.id.local_music_bottom_ivLast);
+
         singerTv = findViewById(R.id.local_music_bottom_tvSinger);
         songTv = findViewById(R.id.local_music_bottom_tvSong);
+
         musicRv = findViewById(R.id.local_music_rv);
         album = findViewById(R.id.local_music_bottom_ivIcon);
 

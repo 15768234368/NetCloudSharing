@@ -54,29 +54,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_centerVertical="true"
         android:src="@mipmap/icon_next" />
 
     <ImageView
         android:id="@+id/local_music_bottom_ivPlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_marginRight="20dp"
-        android:layout_marginBottom="10dp"
         android:layout_toLeftOf="@id/local_music_bottom_ivNext"
+        android:layout_centerVertical="true"
         android:src="@mipmap/icon_play" />
 
     <ImageView
         android:id="@+id/local_music_bottom_ivLast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
         android:layout_marginRight="20dp"
         android:layout_toLeftOf="@id/local_music_bottom_ivPlay"
+        android:layout_centerVertical="true"
         android:src="@mipmap/icon_last" />
 
 </RelativeLayout>
