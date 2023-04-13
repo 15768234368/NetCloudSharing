@@ -1,5 +1,4 @@
 package com.example.netcloudsharing.Music;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +9,10 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.example.netcloudsharing.R;
+
+import java.io.IOException;
+
+import static com.example.netcloudsharing.Fragment.MainActivity.binder;
 
 public class HttpGetDemoActivity extends Activity {
     /**
@@ -42,11 +45,12 @@ public class HttpGetDemoActivity extends Activity {
         seekBar = (SeekBar) findViewById(R.id.seekBar_playing);
         ButtonClickListener clickListener = new ButtonClickListener();
         SeekBarChangeEvent seekBarChangeEvent = new SeekBarChangeEvent();
-        download.setOnClickListener(clickListener);
-        delete.setOnClickListener(clickListener);
+//        download.setOnClickListener(clickListener);
+//        delete.setOnClickListener(clickListener);
         onlinPlay.setOnClickListener(clickListener);
         stop.setOnClickListener(clickListener);
         seekBar.setOnSeekBarChangeListener(seekBarChangeEvent);
+
     }
 
     private final class ButtonClickListener implements OnClickListener {
@@ -59,7 +63,12 @@ public class HttpGetDemoActivity extends Activity {
                         @Override
                         public void run() {
                             //把http://abv.cn/music/光辉岁月.mp3传入并 播放音乐
-                            musicPlayer.play(pathtext);
+//                            musicPlayer.play(pathtext);
+                            try {
+                                binder.playNetMusicBySearch(pathtext);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }).start();
                     break;
