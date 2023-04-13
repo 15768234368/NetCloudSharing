@@ -42,6 +42,19 @@ public class MusicService extends Service {
                 playMusicPosition(mData.get(position));
         }
 
+        public void playNetMusicBySearch(String path) throws IOException {
+            stopMusic();
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(path);
+            mediaPlayer.prepareAsync();
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mediaPlayer.start();
+                }
+            });
+        }
+
         /**
          * 根据传入对象播放音乐
          *
@@ -49,11 +62,11 @@ public class MusicService extends Service {
          */
         public void playMusicPosition(LocalMusicBean musicBean) {
             if (mData.size() == 0) return;
-            if (musicBean == null) {
+            if (musicBean == null) { //播放第一首歌
                 musicBean = mData.get(0);
                 currentPlayPosition = 0;
             }
-            stopMusic();
+            stopMusic(); //播放之前先重装
             //重装多媒体播放器
             mediaPlayer.reset();
             //设置新的播放路径
@@ -102,7 +115,7 @@ public class MusicService extends Service {
         /**
          * 停止音乐的操作
          */
-        void stopMusic() {
+        public void stopMusic() {
             if (mediaPlayer != null) {
                 currentPausePositionInSong = 0;
                 mediaPlayer.pause();
@@ -168,6 +181,7 @@ public class MusicService extends Service {
         //设置播放完成后自动播放下一曲
         setAutoMusic();
     }
+
 
     /**
      * 播放完成后自动播放下一曲
