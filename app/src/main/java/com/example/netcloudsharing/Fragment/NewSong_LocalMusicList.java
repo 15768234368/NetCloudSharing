@@ -1,6 +1,7 @@
 package com.example.netcloudsharing.Fragment;
 
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +20,7 @@ import com.example.netcloudsharing.LocalMusicAdapter;
 import com.example.netcloudsharing.LocalMusicBean;
 import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.diary.Permission;
+import com.example.netcloudsharing.tool.MusicUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +28,19 @@ import java.util.List;
 import static com.example.netcloudsharing.Fragment.MainActivity.binder;
 import static com.example.netcloudsharing.service.MusicService.currentPlayPosition;
 
-public class ActivityMusicHome extends AppCompatActivity implements View.OnClickListener {
-    private static final String TAG = "ActivityMusicHome";
+public class NewSong_LocalMusicList extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = NewSong_LocalMusicList.class.getSimpleName();
     //三个播放歌曲按钮
-    private ImageView nextIv, playIv, lastIv, album;
+    private ImageView nextIv, playIv, lastIv, album, songImage;
     //歌曲歌手
     private TextView singerTv, songTv;
     private RecyclerView musicRv;
     private LocalMusicAdapter adapter;
     //数据源
     List<LocalMusicBean> mData;
+    //点击正在播放的音乐查看详细信息
+    private RelativeLayout relativeLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,11 +132,16 @@ public class ActivityMusicHome extends AppCompatActivity implements View.OnClick
         songTv = findViewById(R.id.local_music_bottom_tvSong);
 
         musicRv = findViewById(R.id.local_music_rv);
-        album = findViewById(R.id.local_music_bottom_ivIcon);
+        songImage = findViewById(R.id.local_music_bottom_ivIcon);
+
+        relativeLayout = findViewById(R.id.local_music_bottomLayout);
 
         nextIv.setOnClickListener(this);
         lastIv.setOnClickListener(this);
         playIv.setOnClickListener(this);
+
+        relativeLayout.setOnClickListener(this);
+
     }
 
     @Override
@@ -163,13 +174,17 @@ public class ActivityMusicHome extends AppCompatActivity implements View.OnClick
                 binder.playNextMusic();
                 setMusicBean(binder.getMusicBean());
                 break;
-
+            case R.id.local_music_bottomLayout:
+                Intent currentMusicIntent = new Intent(NewSong_LocalMusicList.this, CurrentPlayMusic.class);
+                startActivity(currentMusicIntent);
+                break;
         }
     }
 
     private void setMusicBean(LocalMusicBean bean) {
         singerTv.setText(bean.getSinger());
         songTv.setText(bean.getSong());
+        MusicUtil.setAlbumImage(songImage, binder.getCurrentSongAlbumPath());
         if (binder.isMusicPlaying()) {
             playIv.setImageResource(R.mipmap.icon_pause);
         } else {
@@ -188,9 +203,9 @@ public class ActivityMusicHome extends AppCompatActivity implements View.OnClick
 
     @Override
     protected void onDestroy() {
-        SharedPreferences sp = getSharedPreferences("lastMusicPlayPosition",MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("lastMusicPlayPosition", MODE_PRIVATE);
         SharedPreferences.Editor edit = sp.edit();
-        edit.putInt("lastMusicPlayPosition",currentPlayPosition);
+        edit.putInt("lastMusicPlayPosition", currentPlayPosition);
         edit.commit();
         super.onDestroy();
     }

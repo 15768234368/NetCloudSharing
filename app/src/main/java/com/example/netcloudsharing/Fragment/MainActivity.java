@@ -45,9 +45,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initEvent();//初始化事件
 
         conn = new myConn();
-        Intent intent = new Intent(this,MusicService.class);
-        bindService(intent,conn, Context.BIND_AUTO_CREATE);
-        Log.d("MainActivity","1");
+        Intent intent = new Intent(this, MusicService.class);
+        bindService(intent, conn, Context.BIND_AUTO_CREATE);
+        Log.d("MainActivity", "1");
         selectTab(0);
     }
 
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             binder = (MusicService.MyBinder) service;
-            Log.d("MainActivity","4");
+            Log.d("MainActivity", "4");
         }
 
         @Override
@@ -187,9 +187,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
-        SharedPreferences sp = getSharedPreferences("lastMusicPlayPosition",MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("lastMusicPlayPosition", MODE_PRIVATE);
         SharedPreferences.Editor edit = sp.edit();
-        edit.putInt("lastMusicPlayPosition",currentPlayPosition);
+        edit.putInt("lastMusicPlayPosition", currentPlayPosition);
         edit.commit();
 
         super.onDestroy();

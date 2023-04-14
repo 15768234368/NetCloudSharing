@@ -46,13 +46,10 @@ public class FragmentMusic_NewSong extends Fragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fragment_music_newSong_llLocalSong:
-                Intent intent = new Intent(getContext(), ActivityMusicHome.class);
+                Intent intent = new Intent(getContext(), NewSong_LocalMusicList.class);
                 startActivity(intent);
                 break;
-//            case R.id.fragment_music_newsong_ibDownloadMusic:
-//                Intent intent1 = new Intent(getContext(), MusicDownload.class);
-//                startActivity(intent1);
-//                break;
+
         }
     }
 

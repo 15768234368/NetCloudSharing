@@ -16,9 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".Fragment.CurrentPlayMusic"></activity>
+
         <service
             android:name=".service.MusicDownloadService"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity android:name=".Music.HttpGetDemoActivity" />
         <activity android:name=".Music.MusicSearch" />
@@ -37,7 +39,7 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".Fragment.ActivityMusicHome" />
+        <activity android:name=".Fragment.NewSong_LocalMusicList" />
         <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".diary.MainActivity" />

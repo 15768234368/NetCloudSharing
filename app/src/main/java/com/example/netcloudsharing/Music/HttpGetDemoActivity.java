@@ -1,4 +1,5 @@
 package com.example.netcloudsharing.Music;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.service.MusicDownloadService;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 import static com.example.netcloudsharing.Fragment.MainActivity.binder;
 
@@ -76,7 +78,17 @@ public class HttpGetDemoActivity extends Activity {
                     musicPlayer.pause();
                     break;
                 case R.id.btn_netMusicDownload:
-                    MusicDownloadService.startActionDownLoad(HttpGetDemoActivity.this, pathText, "English_Song");
+                    Calendar calendar = Calendar.getInstance();
+                    int year = calendar.get(Calendar.YEAR);
+                    int month = calendar.get(Calendar.MONTH) + 1;
+                    int day = calendar.get(Calendar.DAY_OF_MONTH);
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
+                    int second = calendar.get(Calendar.SECOND);
+
+                    String filename = String.format("%04d-%02d-%02d_%02d-%02d-%02d", year, month, day, hour, minute, second);
+
+                    MusicDownloadService.startActionDownLoad(HttpGetDemoActivity.this, pathText, filename);
                     break;
                 default:
                     break;

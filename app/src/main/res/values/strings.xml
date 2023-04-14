@@ -41,4 +41,9 @@
     <string name="sportRecord">运动记录</string>
     <string name="functionSetting">功能设置</string>
     <string name="softVersion">云村1.0版本</string>
+    <string name="Alex">Alex Music</string>
+    <string name="Blow">起风了</string>
+    <string name="Aua">买辣椒也用卷</string>
+    <string name="one">0.25</string>
+    <string name="two">-0.25</string>
 </resources>

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,11 +22,14 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.netcloudsharing.LocalMusicBean;
 import com.example.netcloudsharing.Music.MusicSearch;
 import com.example.netcloudsharing.R;
+import com.example.netcloudsharing.tool.MusicUtil;
 
 import static com.example.netcloudsharing.Fragment.MainActivity.binder;
 import static com.example.netcloudsharing.service.MusicService.currentPlayPosition;
 
 public class FragmentMusic extends Fragment implements View.OnClickListener {
+    private static final String TAG = FragmentMusic.class.getSimpleName();
+
     FragmentMusic_NewSong fragmentMusic_newSong;
     FragmentMusic_RankingList fragmentMusic_rankingList;
     FragmentMusic_SongList fragmentMusic_songList;
@@ -40,12 +44,14 @@ public class FragmentMusic extends Fragment implements View.OnClickListener {
 
     private View thisView;
     //三个播放歌曲按钮
-    private ImageView nextIv, playIv, lastIv, album;
+    private ImageView nextIv, playIv, lastIv, songImage;
     //歌曲歌手
     private TextView singerTv, songTv;
     private boolean firstOpen = true;
-
+    //搜索歌曲
     private ImageButton ibSearch;
+    //点击正在播放的音乐查看详细信息
+    private RelativeLayout relativeLayout;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -76,12 +82,19 @@ public class FragmentMusic extends Fragment implements View.OnClickListener {
         nextIv = thisView.findViewById(R.id.local_music_bottom_ivNext);
         playIv = thisView.findViewById(R.id.local_music_bottom_ivPlay);
         lastIv = thisView.findViewById(R.id.local_music_bottom_ivLast);
+        songImage = thisView.findViewById(R.id.local_music_bottom_ivIcon);
+
+        relativeLayout = thisView.findViewById(R.id.local_music_bottomLayout);
 
         nextIv.setOnClickListener(this);
         lastIv.setOnClickListener(this);
         playIv.setOnClickListener(this);
-
+        relativeLayout.setOnClickListener(this);
         ibSearch.setOnClickListener(this);
+
+
+        Log.d(TAG, "initView: test");
+
     }
 
     @Nullable
@@ -114,6 +127,7 @@ public class FragmentMusic extends Fragment implements View.OnClickListener {
                         playIv.setImageResource(R.mipmap.icon_pause);
                     } else {
                         binder.playMusicPosition(currentPlayPosition);
+                        playIv.setImageResource(R.mipmap.icon_next);
                     }
                     firstOpen = false;
                 } else {
@@ -128,6 +142,7 @@ public class FragmentMusic extends Fragment implements View.OnClickListener {
                     }
                 }
                 setMusicBean(binder.getMusicBean());
+                Log.d(TAG, "onClick: ");
 
                 break;
             case R.id.local_music_bottom_ivLast:
@@ -139,14 +154,22 @@ public class FragmentMusic extends Fragment implements View.OnClickListener {
                 setMusicBean(binder.getMusicBean());
                 break;
             case R.id.fragment_music_ibSearch:
-                Intent intent = new Intent(getActivity(), MusicSearch.class);
-                startActivity(intent);
+                Intent searchIntent = new Intent(getActivity(), MusicSearch.class);
+                startActivity(searchIntent);
+                break;
+
+            case R.id.local_music_bottomLayout:
+                Intent currentMusicIntent = new Intent(getActivity(), CurrentPlayMusic.class);
+                startActivity(currentMusicIntent);
+                break;
+
         }
     }
 
     public void setMusicBean(LocalMusicBean bean) {
         singerTv.setText(bean.getSinger());
         songTv.setText(bean.getSong());
+        MusicUtil.setAlbumImage(songImage, binder.getCurrentSongAlbumPath());
         if (binder.isMusicPlaying()) {
             playIv.setImageResource(R.mipmap.icon_pause);
         } else {
@@ -211,7 +234,7 @@ public class FragmentMusic extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("MainActivity", "no");
+        Log.d(TAG, "onResume");
         if (binder != null) {
             setMusicBean(binder.getMusicBean());
         }

@@ -2,9 +2,11 @@ package com.example.netcloudsharing.service;
 
 import android.app.Service;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
@@ -22,7 +24,7 @@ import java.util.List;
 // 导入 ID3 标签库
 
 public class MusicService extends Service {
-    private static final String TAG = "MusicService";   //TAG信息
+    private static final String TAG = MusicService.class.getSimpleName();   //TAG信息
     private List<LocalMusicBean> mData;                 //音乐数据链表
     MediaPlayer mediaPlayer;                            //音乐播放器
     //记录当前正在播放的音乐的位置（即播放到了第几首歌了）
@@ -32,7 +34,30 @@ public class MusicService extends Service {
     MyBinder binder;
 
     public class MyBinder extends Binder {
+        public void setVolume(float left, float right){
+            if(mediaPlayer != null)
+            mediaPlayer.setVolume(left, right);
+        }
+        public int getCurrentPosition(){
+            return mediaPlayer.getCurrentPosition();
+        }
+        public boolean isMediaPlay(){
+            return mediaPlayer != null;
+        }
+        public void seekTo(int progress){
+            if(mediaPlayer != null && currentPlayPosition != -1)
+                mediaPlayer.seekTo(progress);
+        }
 
+        public int getMusicDuration(){
+            if(mediaPlayer != null && currentPlayPosition != -1)
+            return mediaPlayer.getDuration();
+            else return -1;
+        }
+
+        public String getCurrentSongAlbumPath() {
+            return mData.get(currentPlayPosition).getPath();
+        }
 
         /**
          * 根据传入的位置播放音乐
@@ -40,6 +65,7 @@ public class MusicService extends Service {
          * @param position 传入的位置
          */
         public void playMusicPosition(int position) {
+
             if (position >= 0 && position <= mData.size())
                 playMusicPosition(mData.get(position));
         }
@@ -62,10 +88,14 @@ public class MusicService extends Service {
          *
          * @param musicBean 传入对象
          */
-        public void playMusicPosition(LocalMusicBean musicBean) {
+        public void playMusicPosition(final LocalMusicBean musicBean) {
+//            doPlayThread = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+            LocalMusicBean bean = musicBean; //当前播放的音乐
             if (mData.size() == 0) return;
-            if (musicBean == null) { //播放第一首歌
-                musicBean = mData.get(0);
+            if (bean == null) { //播放第一首歌
+                bean = mData.get(0);
                 currentPlayPosition = 0;
             }
             stopMusic(); //播放之前先重装
@@ -73,11 +103,15 @@ public class MusicService extends Service {
             mediaPlayer.reset();
             //设置新的播放路径
             try {
-                mediaPlayer.setDataSource(musicBean.getPath());
+                mediaPlayer.setDataSource(bean.getPath());
                 playMusic();
+                Log.d(TAG, "run:播放当前音乐 " + musicBean.getSong());
             } catch (IOException e) {
                 e.printStackTrace();
             }
+//                }
+//            });
+//            doPlayThread.start();
         }
 
         /**
@@ -172,11 +206,18 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("MainActivity", "2");
+        Log.d(TAG, "2");
         mData = new ArrayList<>();
         //加载本地数据源
         loadLocalMusicData();
         mediaPlayer = new MediaPlayer();
+        //设置播放器的音量为系统音量
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        float volume = (float) currentVolume / maxVolume;
+        mediaPlayer.setVolume(volume, volume);
+
         //恢复上次关闭程序的播放位置
         SharedPreferences sp = getSharedPreferences("lastMusicPlayPosition", MODE_PRIVATE);
         currentPlayPosition = sp.getInt("lastMusicPlayPosition", -1);
@@ -206,8 +247,19 @@ public class MusicService extends Service {
     }
 
     @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy: musicService is destroying");
+        super.onDestroy();
+//        doPlayThread.interrupt();
+//        doPlayThread = null;
+        mediaPlayer.reset();
+        mediaPlayer.release();
+        mediaPlayer = null;
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
-        Log.d("MainActivity", "3");
+        Log.d(TAG, "3");
         this.binder = new MyBinder();
         return this.binder;
     }
