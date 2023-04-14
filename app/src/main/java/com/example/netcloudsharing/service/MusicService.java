@@ -19,12 +19,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// 导入 ID3 标签库
+
 public class MusicService extends Service {
-    private static final String TAG = "MusicService";
-    private List<LocalMusicBean> mData;
-    MediaPlayer mediaPlayer;
-    //记录当前正在播放的音乐的位置
-    public static int currentPlayPosition = -1;//默认没有播放
+    private static final String TAG = "MusicService";   //TAG信息
+    private List<LocalMusicBean> mData;                 //音乐数据链表
+    MediaPlayer mediaPlayer;                            //音乐播放器
+    //记录当前正在播放的音乐的位置（即播放到了第几首歌了）
+    public static int currentPlayPosition = -1;         //默认没有播放
     //记录暂停音乐时进度条哦的位置
     int currentPausePositionInSong = 0;
     MyBinder binder;
@@ -239,6 +241,7 @@ public class MusicService extends Service {
             LocalMusicBean bean = new LocalMusicBean(sid, song, singer, album, time, path);
             mData.add(bean);
         }
+
     }
 
 

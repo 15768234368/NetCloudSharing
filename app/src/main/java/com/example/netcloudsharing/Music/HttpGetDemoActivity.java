@@ -9,6 +9,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.example.netcloudsharing.R;
+import com.example.netcloudsharing.service.MusicDownloadService;
 
 import java.io.IOException;
 
@@ -23,32 +24,32 @@ public class HttpGetDemoActivity extends Activity {
     private SeekBar seekBar = null;
     private static final String TAG = "HttpGetDemoActivity";
     private MusicPlayer musicPlayer = null;
-    private String pathtext = null;
+
+    private String pathText = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_player);
         findView();
-        pathtext = getIntent().getStringExtra("path");
-//        downloader = new Downloader();
+        pathText = getIntent().getStringExtra("path");
         musicPlayer = new MusicPlayer(seekBar);
 
     }
 
     private void findView() {
-//        tvPath = findViewById(R.id.tvPath);
-//        download = (Button) findViewById(R.id.btn_download);
-//        delete = (Button) findViewById(R.id.btn_delete);
         onlinPlay = (Button) findViewById(R.id.btn_play);
         stop = (Button) findViewById(R.id.btn_pause);
+        download = (Button) findViewById(R.id.btn_netMusicDownload);
+
         seekBar = (SeekBar) findViewById(R.id.seekBar_playing);
         ButtonClickListener clickListener = new ButtonClickListener();
         SeekBarChangeEvent seekBarChangeEvent = new SeekBarChangeEvent();
-//        download.setOnClickListener(clickListener);
-//        delete.setOnClickListener(clickListener);
+
         onlinPlay.setOnClickListener(clickListener);
         stop.setOnClickListener(clickListener);
+        download.setOnClickListener(clickListener);
+
         seekBar.setOnSeekBarChangeListener(seekBarChangeEvent);
 
     }
@@ -62,10 +63,8 @@ public class HttpGetDemoActivity extends Activity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            //把http://abv.cn/music/光辉岁月.mp3传入并 播放音乐
-//                            musicPlayer.play(pathtext);
                             try {
-                                binder.playNetMusicBySearch(pathtext);
+                                binder.playNetMusicBySearch(pathText);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -75,6 +74,9 @@ public class HttpGetDemoActivity extends Activity {
                 case R.id.btn_pause:
                     //暂停
                     musicPlayer.pause();
+                    break;
+                case R.id.btn_netMusicDownload:
+                    MusicDownloadService.startActionDownLoad(HttpGetDemoActivity.this, pathText, "English_Song");
                     break;
                 default:
                     break;

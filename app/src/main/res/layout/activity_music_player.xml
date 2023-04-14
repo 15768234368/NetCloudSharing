@@ -30,4 +30,10 @@
         android:id="@+id/seekBar_playing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/btn_netMusicDownload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Download"
+        android:textSize="20sp"/>
 </LinearLayout>

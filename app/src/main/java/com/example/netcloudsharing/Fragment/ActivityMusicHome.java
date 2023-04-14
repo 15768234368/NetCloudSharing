@@ -26,6 +26,7 @@ import static com.example.netcloudsharing.Fragment.MainActivity.binder;
 import static com.example.netcloudsharing.service.MusicService.currentPlayPosition;
 
 public class ActivityMusicHome extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = "ActivityMusicHome";
     //三个播放歌曲按钮
     private ImageView nextIv, playIv, lastIv, album;
     //歌曲歌手
@@ -100,6 +101,40 @@ public class ActivityMusicHome extends AppCompatActivity implements View.OnClick
             LocalMusicBean bean = new LocalMusicBean(sid, song, singer, album, time, path);
             mData.add(bean);
         }
+//        // 5. 获取下载音乐的URL
+//        File[] files = getFilesDir().listFiles();
+//
+//        for (File file : files) {
+//            if (file.isFile()) {
+//                String url = file.toURI().toString();
+//                Log.d(TAG, "loadLocalMusicData: " + url);
+//                try {
+//                    Mp3File mp3file = new Mp3File(file);
+//                    // 获取 ID3v1 标签
+//                    if (mp3file.hasId3v1Tag()) {
+//                        ID3v1 id3v1tag = mp3file.getId3v1Tag();
+//                        String song = id3v1tag.getTitle();
+//                        String singer = id3v1tag.getArtist();
+//                        String album = id3v1tag.getAlbum();
+//                        String sid = String.valueOf(++id);
+//                        String path = file.toURI().toString();
+//                        long duration = mp3file.getLengthInMilliseconds();
+//                        int minute = (int) (duration / 1000 / 60);
+//                        int second = (int) (duration / 1000 % 60);
+//                        String time = String.valueOf(minute) + ":" + String.valueOf(second);
+//                        LocalMusicBean bean = new LocalMusicBean(sid, song, singer, album, time, path);
+//                        mData.add(bean);
+//                        // ... 其他属性
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                } catch (UnsupportedTagException e) {
+//                    e.printStackTrace();
+//                } catch (InvalidDataException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
         //数据源发送变化,提示适配器更新
         adapter.notifyDataSetChanged();
         setMusicCount();

@@ -27,7 +27,7 @@ public class MusicSearch extends AppCompatActivity implements View.OnClickListen
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                path = "http://k6.kekenet.com/Sound/2019/08/m200016581_1484302841_1444410KGM.mp3";
+                path = "http://10.77.169.168/test.mp3";
                 Intent intent = new Intent(MusicSearch.this,HttpGetDemoActivity.class);
                 intent.putExtra("path",path);
                 startActivity(intent);
