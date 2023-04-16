@@ -4,36 +4,36 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/fragment_music_rlTop"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:background="@color/red">
-        <ImageButton
-            android:id="@+id/fragment_music_ibMenu"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/menu"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp" />
+    android:id="@+id/fragment_music_rlTop"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:background="@color/red">
+    <ImageButton
+        android:id="@+id/fragment_music_ibMenu"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:background="@drawable/menu"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp" />
 
-        <ImageButton
-            android:id="@+id/fragment_music_ibIcon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerInParent="true"
-            android:background="@drawable/music_icon" />
+    <ImageButton
+        android:id="@+id/fragment_music_ibIcon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/music_icon" />
 
-        <ImageButton
-            android:id="@+id/fragment_music_ibSearch"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/search"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"/>
+    <ImageButton
+        android:id="@+id/fragment_music_ibSearch"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:background="@drawable/search"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"/>
 
-    </RelativeLayout>
+</RelativeLayout>
     <LinearLayout
         android:id="@+id/fragment_music_llSelectTab"
         android:layout_width="match_parent"

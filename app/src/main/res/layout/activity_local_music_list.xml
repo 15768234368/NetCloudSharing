@@ -2,12 +2,47 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/activity_localMusicList_llTop"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/red"
+        android:gravity="center_vertical">
+        <ImageButton
+            android:id="@+id/activity_localMusicList_ibBack"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/backtomusichome"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp" />
 
+        <SearchView
+            android:id="@+id/activity_localMusicList_svSearchList"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:background="@drawable/search_shape"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:iconifiedByDefault="false" />
+
+        <ImageButton
+            android:id="@+id/activity_localMusicList_ibGoSearch"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/search"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/local_music_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/activity_localMusicList_llTop"
         android:layout_above="@id/local_music_bottomLayout">
 
     </androidx.recyclerview.widget.RecyclerView>

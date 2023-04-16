@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
     private static final String TAG = NewSong_LocalMusicList.class.getSimpleName();
     //三个播放歌曲按钮
     private ImageView nextIv, playIv, lastIv, album, songImage;
+    private ImageButton backIb;
     //歌曲歌手
     private TextView singerTv, songTv;
     private RecyclerView musicRv;
@@ -126,6 +128,8 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
         playIv = findViewById(R.id.local_music_bottom_ivPlay);
         lastIv = findViewById(R.id.local_music_bottom_ivLast);
 
+        backIb = findViewById(R.id.activity_localMusicList_ibBack);
+
         singerTv = findViewById(R.id.local_music_bottom_tvSinger);
         songTv = findViewById(R.id.local_music_bottom_tvSong);
 
@@ -134,9 +138,11 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
 
         relativeLayout = findViewById(R.id.local_music_bottomLayout);
 
+        backIb.setOnClickListener(this);
         nextIv.setOnClickListener(this);
         lastIv.setOnClickListener(this);
         playIv.setOnClickListener(this);
+
 
         relativeLayout.setOnClickListener(this);
 
@@ -145,6 +151,9 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.activity_localMusicList_ibBack:
+                finish();
+                break;
             case R.id.local_music_bottom_ivPlay:
                 if (binder.getCurrentPosition() == -1) {
                     //如果没有音乐在播放
