@@ -110,7 +110,7 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
         //数据源发送变化,提示适配器更新
         adapter.notifyDataSetChanged();
         setMusicCount();
-
+        cursor.close();
     }
 
     public void setMusicCount() {
@@ -203,10 +203,6 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
 
     @Override
     protected void onDestroy() {
-        SharedPreferences sp = getSharedPreferences("lastMusicPlayPosition", MODE_PRIVATE);
-        SharedPreferences.Editor edit = sp.edit();
-        edit.putInt("lastMusicPlayPosition", currentPlayPosition);
-        edit.commit();
         super.onDestroy();
     }
 }

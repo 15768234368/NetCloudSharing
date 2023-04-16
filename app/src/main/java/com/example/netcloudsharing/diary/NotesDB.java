@@ -14,7 +14,7 @@ public class NotesDB extends SQLiteOpenHelper {
     public static final String TYPE = "type";
 
     public NotesDB(Context context) {
-        super(context, "notes", null, 1);
+        super(context, "notes.db", null, 1);
     }
 
     @Override
@@ -22,7 +22,7 @@ public class NotesDB extends SQLiteOpenHelper {
         db.execSQL("create table " + TABLE_NAME + "(" + ID
                 + " integer not null primary key autoincrement," + CONTENT
                 + " text," + PATH + " text," + VIDEO
-                + " text," + TIME + " text not null,"+ TYPE
+                + " text," + TIME + " text not null," + TYPE
                 + " tinyint not null)");
     }
 

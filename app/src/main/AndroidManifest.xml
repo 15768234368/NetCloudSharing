@@ -16,7 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Fragment.CurrentPlayMusic"></activity>
+        <activity android:name=".Music.DownloadedMusicActivity"></activity>
+        <activity android:name=".Fragment.CurrentPlayMusic" />
 
         <service
             android:name=".service.MusicDownloadService"

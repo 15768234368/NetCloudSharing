@@ -89,14 +89,20 @@ public class MusicService extends Service {
          * @param musicBean 传入对象
          */
         public void playMusicPosition(final LocalMusicBean musicBean) {
-//            doPlayThread = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
+            int i = 0;
+            if(musicBean != null){
+                for(LocalMusicBean bean : mData){
+                    if(bean.getId().equals(musicBean.getId()))
+                        break;
+                    i++;
+                }
+            }
+            Log.d(TAG, "playMusicPosition: " + i);
+            currentPlayPosition = i;
             LocalMusicBean bean = musicBean; //当前播放的音乐
             if (mData.size() == 0) return;
             if (bean == null) { //播放第一首歌
                 bean = mData.get(0);
-                currentPlayPosition = 0;
             }
             stopMusic(); //播放之前先重装
             //重装多媒体播放器
@@ -109,9 +115,7 @@ public class MusicService extends Service {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-//                }
-//            });
-//            doPlayThread.start();
+
         }
 
         /**
@@ -170,6 +174,7 @@ public class MusicService extends Service {
                 Toast.makeText(getApplicationContext(), "已经是第一首", Toast.LENGTH_SHORT).show();
             } else {
                 currentPlayPosition--;
+                Log.d(TAG, "playLastMusic: " + mData.get(currentPlayPosition).getSong() + " Position is " + currentPlayPosition);
                 playMusicPosition(mData.get(currentPlayPosition));
             }
         }
@@ -222,39 +227,43 @@ public class MusicService extends Service {
         SharedPreferences sp = getSharedPreferences("lastMusicPlayPosition", MODE_PRIVATE);
         currentPlayPosition = sp.getInt("lastMusicPlayPosition", -1);
         //设置播放完成后自动播放下一曲
-        setAutoMusic();
+//        setAutoMusic();
     }
 
 
     /**
      * 播放完成后自动播放下一曲
      */
-    private void setAutoMusic() {
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                if (currentPlayPosition == mData.size() - 1) {
-                    Toast.makeText(getApplicationContext(), "最后一首歌曲啦，请重新播放", Toast.LENGTH_SHORT).show();
-                    currentPlayPosition = 0;
-                    binder.stopMusic();
-                } else {
-                    currentPlayPosition++;
-                    binder.playMusicPosition(currentPlayPosition);
-
-                }
-            }
-        });
-    }
+//    private void setAutoMusic() {
+//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(MediaPlayer mp) {
+//                if (currentPlayPosition == mData.size() - 1) {
+//                    Toast.makeText(getApplicationContext(), "最后一首歌曲啦，请重新播放", Toast.LENGTH_SHORT).show();
+//                    currentPlayPosition = 0;
+//                    binder.stopMusic();
+//                } else {
+//                    currentPlayPosition++;
+//                    binder.playMusicPosition(currentPlayPosition);
+//
+//                }
+//            }
+//        });
+//    }
 
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy: musicService is destroying");
+        SharedPreferences sp = getSharedPreferences("lastMusicPlayPosition", MODE_PRIVATE);
+        SharedPreferences.Editor edit = sp.edit();
+        edit.putInt("lastMusicPlayPosition", currentPlayPosition);
+        edit.apply();//从commit修改到了apply
         super.onDestroy();
 //        doPlayThread.interrupt();
 //        doPlayThread = null;
-        mediaPlayer.reset();
-        mediaPlayer.release();
-        mediaPlayer = null;
+//        mediaPlayer.reset();
+//        mediaPlayer.release();
+//        mediaPlayer = null;
     }
 
     @Override
@@ -293,6 +302,7 @@ public class MusicService extends Service {
             LocalMusicBean bean = new LocalMusicBean(sid, song, singer, album, time, path);
             mData.add(bean);
         }
+        cursor.close();
 
     }
 

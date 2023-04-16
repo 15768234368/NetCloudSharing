@@ -1,37 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".Music.MusicSearch">
-        <ImageButton
-            android:id="@+id/fragment_music_ibBackToMusicHome"
-            android:layout_width="30dp"
-            android:layout_height="25dp"
-            android:background="@drawable/backtohome"
-            android:layout_marginLeft="10dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignTop="@id/activity_music_search_svSearchContext"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@id/activity_music_search_svSearchContext"/>
+            android:gravity="center_vertical">
+                <ImageButton
+                    android:id="@+id/fragment_music_ibBackToMusicHome"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/backtohome"
+                    android:contentDescription="@string/back"
+                    android:layout_marginStart="10dp"/>
 
-        <SearchView
-            android:id="@+id/activity_music_search_svSearchContext"
-            android:layout_width="240dp"
-            android:layout_height="40dp"
-            android:background="@drawable/search_shape"
-            android:iconifiedByDefault="false"
-            android:layout_alignTop="@id/activity_music_search_btnNext"
-            android:layout_toLeftOf="@id/activity_music_search_btnNext"
-            android:layout_marginRight="10dp" />
-        <Button
-            android:id="@+id/activity_music_search_btnNext"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/musicsearch"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="30dp"/>
-</RelativeLayout>
+                <SearchView
+                    android:id="@+id/activity_music_search_svSearchContext"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/search_shape"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:iconifiedByDefault="false" />
+                <Button
+                    android:id="@+id/activity_music_search_btnNext"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/musicsearch"
+                    android:layout_marginEnd="10dp"/>
+        </LinearLayout>
+</LinearLayout>

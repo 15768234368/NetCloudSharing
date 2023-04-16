@@ -43,11 +43,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         initView();//初始化控件
         initEvent();//初始化事件
-
-        conn = new myConn();
-        Intent intent = new Intent(this, MusicService.class);
-        bindService(intent, conn, Context.BIND_AUTO_CREATE);
-        Log.d("MainActivity", "1");
+        if(binder == null){
+            conn = new myConn();
+            Intent intent = new Intent(this, MusicService.class);
+            bindService(intent, conn, Context.BIND_AUTO_CREATE);
+            Log.d("MainActivity", "1");
+        }
         selectTab(0);
     }
 

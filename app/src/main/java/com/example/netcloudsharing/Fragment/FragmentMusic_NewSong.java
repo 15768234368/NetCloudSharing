@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.netcloudsharing.Music.DownloadedMusicActivity;
 import com.example.netcloudsharing.R;
 
 public class FragmentMusic_NewSong extends Fragment implements View.OnClickListener {
@@ -46,8 +47,12 @@ public class FragmentMusic_NewSong extends Fragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fragment_music_newSong_llLocalSong:
-                Intent intent = new Intent(getContext(), NewSong_LocalMusicList.class);
-                startActivity(intent);
+                Intent intent_localSong = new Intent(getContext(), NewSong_LocalMusicList.class);
+                startActivity(intent_localSong);
+                break;
+            case R.id.fragment_music_newsong_ibDownloadMusic:
+                Intent intent_download = new Intent(getContext(), DownloadedMusicActivity.class);
+                startActivity(intent_download);
                 break;
 
         }
