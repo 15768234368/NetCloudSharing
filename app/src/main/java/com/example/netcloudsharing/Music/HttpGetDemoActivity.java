@@ -1,18 +1,20 @@
 package com.example.netcloudsharing.Music;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.service.MusicDownloadService;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Calendar;
 
 import static com.example.netcloudsharing.Fragment.MainActivity.binder;
@@ -23,9 +25,7 @@ public class HttpGetDemoActivity extends Activity {
      */
     private TextView tvPath = null;
     private Button download, delete, onlinPlay, stop = null;
-    private SeekBar seekBar = null;
     private static final String TAG = "HttpGetDemoActivity";
-    private MusicPlayer musicPlayer = null;
 
     private String pathText = null;
 
@@ -35,24 +35,46 @@ public class HttpGetDemoActivity extends Activity {
         setContentView(R.layout.activity_music_player);
         findView();
         pathText = getIntent().getStringExtra("path");
-        musicPlayer = new MusicPlayer(seekBar);
+        new CheckUrlTask().execute(pathText);
+
 
     }
+    private class CheckUrlTask extends AsyncTask<String, Void, Integer> {
+        @Override
+        protected Integer doInBackground(String... params) {
+            int responseCode = -1;
+            try {
+                URL url = new URL(params[0]);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                responseCode = connection.getResponseCode();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return responseCode;
+        }
+
+        @Override
+        protected void onPostExecute(Integer responseCode) {
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                Toast.makeText(getApplicationContext(), "当前资源不存在，请搜索其他音乐", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+
 
     private void findView() {
         onlinPlay = (Button) findViewById(R.id.btn_play);
         stop = (Button) findViewById(R.id.btn_pause);
         download = (Button) findViewById(R.id.btn_netMusicDownload);
 
-        seekBar = (SeekBar) findViewById(R.id.seekBar_playing);
         ButtonClickListener clickListener = new ButtonClickListener();
-        SeekBarChangeEvent seekBarChangeEvent = new SeekBarChangeEvent();
+//        SeekBarChangeEvent seekBarChangeEvent = new SeekBarChangeEvent();
 
         onlinPlay.setOnClickListener(clickListener);
         stop.setOnClickListener(clickListener);
         download.setOnClickListener(clickListener);
 
-        seekBar.setOnSeekBarChangeListener(seekBarChangeEvent);
 
     }
 
@@ -75,7 +97,7 @@ public class HttpGetDemoActivity extends Activity {
                     break;
                 case R.id.btn_pause:
                     //暂停
-                    musicPlayer.pause();
+                    binder.pauseMusic();
                     break;
                 case R.id.btn_netMusicDownload:
                     Calendar calendar = Calendar.getInstance();
@@ -95,43 +117,43 @@ public class HttpGetDemoActivity extends Activity {
             }
         }
     }
-
-    class SeekBarChangeEvent implements OnSeekBarChangeListener {
-        int progress;
-
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress,
-                                      boolean fromUser) {
-            /**
-             * SeekBar的进度变化监听   把百分进度转变为总文件中的大小
-             * progress为百分比
-             * this.progress为实际播放文件当前位置的大小
-             */
-            this.progress = progress * musicPlayer.mediaPlayer.getDuration() / seekBar.getMax();
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-            /**
-             * 开始拖动监听
-             */
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-            /**
-             * 停止拖动监听
-             * seekTo()的参数是相对与影片时间的数字，而不是与seekBar.getMax()相对的数字
-             */
-            musicPlayer.mediaPlayer.seekTo(progress);
-        }
-    }
+//
+//    class SeekBarChangeEvent implements OnSeekBarChangeListener {
+//        int progress;
+//
+//        @Override
+//        public void onProgressChanged(SeekBar seekBar, int progress,
+//                                      boolean fromUser) {
+//            /**
+//             * SeekBar的进度变化监听   把百分进度转变为总文件中的大小
+//             * progress为百分比
+//             * this.progress为实际播放文件当前位置的大小
+//             */
+//            this.progress = progress * musicPlayer.mediaPlayer.getDuration() / seekBar.getMax();
+//        }
+//
+//        @Override
+//        public void onStartTrackingTouch(SeekBar seekBar) {
+//            /**
+//             * 开始拖动监听
+//             */
+//        }
+//
+//        @Override
+//        public void onStopTrackingTouch(SeekBar seekBar) {
+//            /**
+//             * 停止拖动监听
+//             * seekTo()的参数是相对与影片时间的数字，而不是与seekBar.getMax()相对的数字
+//             */
+//            musicPlayer.mediaPlayer.seekTo(progress);
+//        }
+//    }
 
     @Override
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-        musicPlayer.stop();
+        binder.stopMusic();
     }
 
 }

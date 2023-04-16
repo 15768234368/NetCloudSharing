@@ -18,7 +18,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.service.MusicService;
 
-import static com.example.netcloudsharing.service.MusicService.currentPlayPosition;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -190,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         SharedPreferences sp = getSharedPreferences("lastMusicPlayPosition", MODE_PRIVATE);
         SharedPreferences.Editor edit = sp.edit();
-        edit.putInt("lastMusicPlayPosition", currentPlayPosition);
+        edit.putInt("lastMusicPlayPosition", binder.getCurrentPosition());
         edit.commit();
 
         super.onDestroy();

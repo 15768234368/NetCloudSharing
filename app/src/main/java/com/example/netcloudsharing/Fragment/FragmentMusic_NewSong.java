@@ -17,7 +17,7 @@ import com.example.netcloudsharing.Music.DownloadedMusicActivity;
 import com.example.netcloudsharing.R;
 
 public class FragmentMusic_NewSong extends Fragment implements View.OnClickListener {
-    private TextView tvLocalMusicCount;
+    private TextView tvLocalMusicCount, tvRecentPlayedCount;
     private View thisView;
 
     @Nullable
@@ -36,10 +36,10 @@ public class FragmentMusic_NewSong extends Fragment implements View.OnClickListe
 
     private void init() {
         tvLocalMusicCount = thisView.findViewById(R.id.fragment_music_tvLocalMusicCount);
-
+        tvRecentPlayedCount = thisView.findViewById(R.id.fragment_music_tvRecentPlayedCount);
         thisView.findViewById(R.id.fragment_music_newSong_llLocalSong).setOnClickListener(this);
         thisView.findViewById(R.id.fragment_music_newsong_ibDownloadMusic).setOnClickListener(this);
-        getMusicCount();
+        thisView.findViewById(R.id.fragment_music_newSong_llRecentlyPlayed).setOnClickListener(this);
 
     }
 
@@ -54,16 +54,32 @@ public class FragmentMusic_NewSong extends Fragment implements View.OnClickListe
                 Intent intent_download = new Intent(getContext(), DownloadedMusicActivity.class);
                 startActivity(intent_download);
                 break;
-
+            case R.id.fragment_music_newSong_llRecentlyPlayed:
+                Intent recentPlayedIntent = new Intent(getContext(), NewSong_RecentPlay.class);
+                startActivity(recentPlayedIntent);
+                break;
         }
     }
 
     /**
      * 获取本地音乐数量，并显示
      */
-    public void getMusicCount(){
-        SharedPreferences sp = getActivity().getSharedPreferences("music_count", Context.MODE_PRIVATE);
+    public void getLocalMusicCount(){
+        SharedPreferences sp = getActivity().getSharedPreferences("music_local_count", Context.MODE_PRIVATE);
         int count = sp.getInt("count",0);
         tvLocalMusicCount.setText("("+count+")");
+    }
+
+    public void getRecentPlayCount(){
+        SharedPreferences sp = getActivity().getSharedPreferences("music_recentPlayed_count", Context.MODE_PRIVATE);
+        int count = sp.getInt("count",0);
+        tvRecentPlayedCount.setText("("+count+")");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLocalMusicCount();
+        getRecentPlayCount();
     }
 }

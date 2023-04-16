@@ -25,7 +25,6 @@ import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.tool.MusicUtil;
 
 import static com.example.netcloudsharing.Fragment.MainActivity.binder;
-import static com.example.netcloudsharing.service.MusicService.currentPlayPosition;
 
 public class FragmentMusic extends Fragment implements View.OnClickListener {
     private static final String TAG = FragmentMusic.class.getSimpleName();
@@ -44,9 +43,9 @@ public class FragmentMusic extends Fragment implements View.OnClickListener {
 
     private View thisView;
     //三个播放歌曲按钮
-    private ImageView nextIv, playIv, lastIv, songImage;
+    public static ImageView nextIv, playIv, lastIv, songImage;
     //歌曲歌手
-    private TextView singerTv, songTv;
+    public static TextView singerTv, songTv;
     private boolean firstOpen = true;
     //搜索歌曲
     private ImageButton ibSearch;
@@ -120,13 +119,13 @@ public class FragmentMusic extends Fragment implements View.OnClickListener {
                 break;
             case R.id.local_music_bottom_ivPlay:
                 if (firstOpen) {
-                    if (currentPlayPosition == -1) {
+                    if (binder.getCurrentPosition() == -1) {
                         //如果没有音乐在播放
                         binder.playMusicPosition(null);
                         setMusicBean(binder.getMusicBean());
                         playIv.setImageResource(R.mipmap.icon_pause);
                     } else {
-                        binder.playMusicPosition(currentPlayPosition);
+                        binder.playMusicPosition(binder.getCurrentPosition());
                         playIv.setImageResource(R.mipmap.icon_next);
                     }
                     firstOpen = false;

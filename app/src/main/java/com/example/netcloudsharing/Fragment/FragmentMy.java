@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.diary.MainActivity;
 
-
 public class FragmentMy extends Fragment implements View.OnClickListener {
     private Button btnDiary;
     @Nullable

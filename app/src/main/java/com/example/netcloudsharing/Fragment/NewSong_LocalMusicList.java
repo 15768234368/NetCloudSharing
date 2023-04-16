@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.netcloudsharing.Fragment.MainActivity.binder;
-import static com.example.netcloudsharing.service.MusicService.currentPlayPosition;
 
 public class NewSong_LocalMusicList extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = NewSong_LocalMusicList.class.getSimpleName();
@@ -69,7 +68,6 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
         adapter.setOnItemClickListener(new LocalMusicAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(View view, int position) {
-                currentPlayPosition = position;
                 LocalMusicBean musicBean = mData.get(position);
                 binder.playMusicPosition(musicBean);
                 setMusicBean(binder.getMusicBean());
@@ -114,7 +112,7 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
     }
 
     public void setMusicCount() {
-        SharedPreferences sp = getSharedPreferences("music_count", MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("music_local_count", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt("count", mData.size());
         editor.apply();
@@ -148,7 +146,7 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.local_music_bottom_ivPlay:
-                if (currentPlayPosition == -1) {
+                if (binder.getCurrentPosition() == -1) {
                     //如果没有音乐在播放
                     binder.playMusicPosition(null);
                     setMusicBean(binder.getMusicBean());
@@ -196,7 +194,7 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
     protected void onResume() {
         super.onResume();
         //第二个判断条件是如果还没有播放，则会返回一个错误的值
-        if (binder != null && currentPlayPosition != -1) {
+        if (binder != null && binder.getCurrentPosition() != -1) {
             setMusicBean(binder.getMusicBean());
         }
     }

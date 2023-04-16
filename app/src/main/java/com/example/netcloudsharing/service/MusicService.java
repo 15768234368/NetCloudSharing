@@ -2,10 +2,12 @@ package com.example.netcloudsharing.service;
 
 import android.app.Service;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -16,42 +18,56 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.netcloudsharing.LocalMusicBean;
+import com.example.netcloudsharing.Music.HistoryMusicForUserHelper;
+import com.example.netcloudsharing.User.UserBean;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
+
 
 // 导入 ID3 标签库
 
 public class MusicService extends Service {
-    private static final String TAG = MusicService.class.getSimpleName();   //TAG信息
+    private final String TAG = MusicService.class.getSimpleName();   //TAG信息
     private List<LocalMusicBean> mData;                 //音乐数据链表
     MediaPlayer mediaPlayer;                            //音乐播放器
     //记录当前正在播放的音乐的位置（即播放到了第几首歌了）
-    public static int currentPlayPosition = -1;         //默认没有播放
+    private int currentPlayPosition = -1;         //默认没有播放
     //记录暂停音乐时进度条哦的位置
     int currentPausePositionInSong = 0;
     MyBinder binder;
+    private SQLiteDatabase db = null;
 
     public class MyBinder extends Binder {
-        public void setVolume(float left, float right){
-            if(mediaPlayer != null)
-            mediaPlayer.setVolume(left, right);
+
+        public int getCurrentPosition() {
+            return currentPlayPosition;
         }
-        public int getCurrentPosition(){
+
+        public void setVolume(float left, float right) {
+            if (mediaPlayer != null)
+                mediaPlayer.setVolume(left, right);
+        }
+
+        public int getCurrentPositionInSong() {
             return mediaPlayer.getCurrentPosition();
         }
-        public boolean isMediaPlay(){
+
+        public boolean isMediaPlay() {
             return mediaPlayer != null;
         }
-        public void seekTo(int progress){
-            if(mediaPlayer != null && currentPlayPosition != -1)
+
+        public void seekTo(int progress) {
+            if (mediaPlayer != null && currentPlayPosition != -1)
                 mediaPlayer.seekTo(progress);
         }
 
-        public int getMusicDuration(){
-            if(mediaPlayer != null && currentPlayPosition != -1)
-            return mediaPlayer.getDuration();
+        public int getMusicDuration() {
+            if (mediaPlayer != null && currentPlayPosition != -1)
+                return mediaPlayer.getDuration();
             else return -1;
         }
 
@@ -90,16 +106,16 @@ public class MusicService extends Service {
          */
         public void playMusicPosition(final LocalMusicBean musicBean) {
             int i = 0;
-            if(musicBean != null){
-                for(LocalMusicBean bean : mData){
-                    if(bean.getId().equals(musicBean.getId()))
+            if (musicBean != null) {
+                for (LocalMusicBean bean : mData) {
+                    if (bean.getPath().equals(musicBean.getPath()))
                         break;
                     i++;
                 }
             }
             Log.d(TAG, "playMusicPosition: " + i);
             currentPlayPosition = i;
-            LocalMusicBean bean = musicBean; //当前播放的音乐
+            LocalMusicBean bean = mData.get(currentPlayPosition); //当前播放的音乐
             if (mData.size() == 0) return;
             if (bean == null) { //播放第一首歌
                 bean = mData.get(0);
@@ -111,12 +127,45 @@ public class MusicService extends Service {
             try {
                 mediaPlayer.setDataSource(bean.getPath());
                 playMusic();
+                writeTrackOfMusic(bean, new UserBean("zzc", "1")); //每播放一条音乐就记录入历史播放记录库
                 Log.d(TAG, "run:播放当前音乐 " + musicBean.getSong());
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         }
+
+        private void writeTrackOfMusic(LocalMusicBean musicBean, UserBean userBean) {
+            HistoryMusicForUserHelper helper = new HistoryMusicForUserHelper(getApplicationContext());
+            SQLiteDatabase db = helper.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            String track_id = UUID.randomUUID().toString().replaceAll("-", "");
+            //为每条音乐记录生成一个独一无二的id
+
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH) + 1;
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            int second = calendar.get(Calendar.SECOND);
+
+            String listen_time = String.format("%04d/%02d/%02d/%02d:%02d:%02d", year, month, day, hour, minute, second);
+
+            values.put(HistoryMusicForUserHelper.TRACK_ID, track_id);
+            values.put(HistoryMusicForUserHelper.SONG_ID, musicBean.getId());
+            values.put(HistoryMusicForUserHelper.SONG_TITLE, musicBean.getSong());
+            values.put(HistoryMusicForUserHelper.SONG_SINGER, musicBean.getSinger());
+            values.put(HistoryMusicForUserHelper.SONG_ALBUM, musicBean.getAlbum());
+            values.put(HistoryMusicForUserHelper.USER, userBean.getUser_name());
+            values.put(HistoryMusicForUserHelper.USER_ID, userBean.getUser_id());
+            values.put(HistoryMusicForUserHelper.LISTEN_TIME, listen_time);
+            values.put(HistoryMusicForUserHelper.SONG_PATH, musicBean.getPath());
+            db.insert(HistoryMusicForUserHelper.TABLE_NAME, null, values);
+            db.close();
+        }
+
 
         /**
          * 播放音乐的函数 点击播放按钮音乐，或者从暂停从新播放
@@ -189,6 +238,7 @@ public class MusicService extends Service {
                 Toast.makeText(getApplicationContext(), "已经是最后一首", Toast.LENGTH_SHORT).show();
             } else {
                 currentPlayPosition++;
+                Log.d(TAG, "playNextMusic: " + mData.get(currentPlayPosition).getSong() + " Position is " + currentPlayPosition);
                 playMusicPosition(mData.get(currentPlayPosition));
             }
         }
@@ -226,30 +276,32 @@ public class MusicService extends Service {
         //恢复上次关闭程序的播放位置
         SharedPreferences sp = getSharedPreferences("lastMusicPlayPosition", MODE_PRIVATE);
         currentPlayPosition = sp.getInt("lastMusicPlayPosition", -1);
-        //设置播放完成后自动播放下一曲
-//        setAutoMusic();
+//        设置播放完成后自动播放下一曲
+        setAutoMusic();
+
     }
 
 
     /**
      * 播放完成后自动播放下一曲
      */
-//    private void setAutoMusic() {
-//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mp) {
-//                if (currentPlayPosition == mData.size() - 1) {
-//                    Toast.makeText(getApplicationContext(), "最后一首歌曲啦，请重新播放", Toast.LENGTH_SHORT).show();
-//                    currentPlayPosition = 0;
-//                    binder.stopMusic();
-//                } else {
-//                    currentPlayPosition++;
-//                    binder.playMusicPosition(currentPlayPosition);
-//
-//                }
-//            }
-//        });
-//    }
+    private void setAutoMusic() {
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                if (currentPlayPosition == mData.size() - 1) {
+                    Log.d(TAG, "onCompletion: ");
+                    Toast.makeText(getApplicationContext(), "最后一首歌曲啦，请重新播放", Toast.LENGTH_SHORT).show();
+                    currentPlayPosition = 0;
+                    binder.stopMusic();
+                } else {
+                    currentPlayPosition++;
+                    binder.playMusicPosition(currentPlayPosition);
+
+                }
+            }
+        });
+    }
 
     @Override
     public void onDestroy() {
@@ -258,12 +310,6 @@ public class MusicService extends Service {
         SharedPreferences.Editor edit = sp.edit();
         edit.putInt("lastMusicPlayPosition", currentPlayPosition);
         edit.apply();//从commit修改到了apply
-        super.onDestroy();
-//        doPlayThread.interrupt();
-//        doPlayThread = null;
-//        mediaPlayer.reset();
-//        mediaPlayer.release();
-//        mediaPlayer = null;
     }
 
     @Override
