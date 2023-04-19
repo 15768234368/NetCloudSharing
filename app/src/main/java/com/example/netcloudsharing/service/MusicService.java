@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -17,9 +18,11 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.netcloudsharing.LocalMusicBean;
 import com.example.netcloudsharing.Music.HistoryMusicForUserHelper;
+import com.example.netcloudsharing.MusicBean;
 import com.example.netcloudsharing.User.UserBean;
+import com.example.netcloudsharing.tool.BitmapListener;
+import com.example.netcloudsharing.tool.MusicUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +35,7 @@ import java.util.UUID;
 
 public class MusicService extends Service {
     private final String TAG = MusicService.class.getSimpleName();   //TAG信息
-    private List<LocalMusicBean> mData;                 //音乐数据链表
+    private List<MusicBean> mData;                 //音乐数据链表
     MediaPlayer mediaPlayer;                            //音乐播放器
     //记录当前正在播放的音乐的位置（即播放到了第几首歌了）
     private int currentPlayPosition = -1;         //默认没有播放
@@ -40,8 +43,26 @@ public class MusicService extends Service {
     int currentPausePositionInSong = 0;
     MyBinder binder;
     private SQLiteDatabase db = null;
+    private Bitmap bitmap = null;
+    MusicBean currentBean = null;
 
     public class MyBinder extends Binder {
+
+        public MusicBean getCurrentNetBean(){
+            return currentBean;
+        }
+
+        public void setCurrentNetBean(MusicBean bean){
+            currentBean = bean;
+        }
+
+        public Bitmap getBitmap() {
+            return bitmap;
+        }
+
+        public void setBitmap(Bitmap map) {
+            bitmap = map;
+        }
 
         public int getCurrentPosition() {
             return currentPlayPosition;
@@ -72,7 +93,7 @@ public class MusicService extends Service {
         }
 
         public String getCurrentSongAlbumPath() {
-            return mData.get(currentPlayPosition).getPath();
+            return mData.get(currentPlayPosition).getPic();
         }
 
         /**
@@ -86,28 +107,39 @@ public class MusicService extends Service {
                 playMusicPosition(mData.get(position));
         }
 
-        public void playNetMusicBySearch(String path) throws IOException {
+        public void playNetMusicBySearch(final MusicBean bean) throws IOException {
             stopMusic();
-            mediaPlayer.reset();
-            mediaPlayer.setDataSource(path);
+            mediaPlayer.reset(); // 先重置MediaPlayer对象
+            binder.setCurrentNetBean(bean);
+            mediaPlayer.setDataSource(bean.getPath());
+            Log.d(TAG, "playNetMusicBySearch: " + bean.getPath());
             mediaPlayer.prepareAsync();
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-                    mediaPlayer.start();
+                    Log.d(TAG, "onPrepared: ");
+                    mp.start(); // 等位图加载完成后，开始播放音乐
+                }
+            });
+
+            MusicUtil.getBitmapFromUrl(bean.getPic(), new BitmapListener() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap) {
+                    binder.setBitmap(bitmap);
                 }
             });
         }
+
 
         /**
          * 根据传入对象播放音乐
          *
          * @param musicBean 传入对象
          */
-        public void playMusicPosition(final LocalMusicBean musicBean) {
+        public void playMusicPosition(final MusicBean musicBean) {
             int i = 0;
             if (musicBean != null) {
-                for (LocalMusicBean bean : mData) {
+                for (MusicBean bean : mData) {
                     if (bean.getPath().equals(musicBean.getPath()))
                         break;
                     i++;
@@ -115,7 +147,7 @@ public class MusicService extends Service {
             }
             Log.d(TAG, "playMusicPosition: " + i);
             currentPlayPosition = i;
-            LocalMusicBean bean = mData.get(currentPlayPosition); //当前播放的音乐
+            MusicBean bean = mData.get(currentPlayPosition); //当前播放的音乐
             if (mData.size() == 0) return;
             if (bean == null) { //播放第一首歌
                 bean = mData.get(0);
@@ -125,6 +157,8 @@ public class MusicService extends Service {
             mediaPlayer.reset();
             //设置新的播放路径
             try {
+                setBitmap(MusicUtil.getAlbumBitmap(bean.getPath()));
+                binder.setCurrentNetBean(bean);
                 mediaPlayer.setDataSource(bean.getPath());
                 playMusic();
                 writeTrackOfMusic(bean, new UserBean("zzc", "1")); //每播放一条音乐就记录入历史播放记录库
@@ -135,7 +169,7 @@ public class MusicService extends Service {
 
         }
 
-        private void writeTrackOfMusic(LocalMusicBean musicBean, UserBean userBean) {
+        private void writeTrackOfMusic(MusicBean musicBean, UserBean userBean) {
             HistoryMusicForUserHelper helper = new HistoryMusicForUserHelper(getApplicationContext());
             SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -243,7 +277,8 @@ public class MusicService extends Service {
             }
         }
 
-        public LocalMusicBean getMusicBean() {
+        public MusicBean getMusicBean() {
+            if(currentPlayPosition < 0 || currentPlayPosition > mData.size() - 1) return null;
             return mData.get(currentPlayPosition);
         }
 
@@ -278,7 +313,8 @@ public class MusicService extends Service {
         currentPlayPosition = sp.getInt("lastMusicPlayPosition", -1);
 //        设置播放完成后自动播放下一曲
         setAutoMusic();
-
+        if(currentPlayPosition >= 0 && currentPlayPosition < mData.size())
+        currentBean = mData.get(currentPlayPosition);
     }
 
 
@@ -345,7 +381,7 @@ public class MusicService extends Service {
             String path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
             String time = String.valueOf(minute) + ":" + String.valueOf(second);
             //将一行当中的数据封装到对象中
-            LocalMusicBean bean = new LocalMusicBean(sid, song, singer, album, time, path);
+            MusicBean bean = new MusicBean(sid, song, singer, album, time, path);
             mData.add(bean);
         }
         cursor.close();

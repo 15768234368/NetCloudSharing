@@ -1,39 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Music.MusicSearch">
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center_vertical">
-                <ImageButton
-                    android:id="@+id/fragment_music_ibBackToMusicHome"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:background="@drawable/backtohome"
-                    android:contentDescription="@string/back"
-                    android:layout_marginStart="10dp"/>
 
-                <SearchView
-                    android:id="@+id/activity_music_search_svSearchContext"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/search_shape"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:iconifiedByDefault="false" />
-                <Button
-                    android:id="@+id/activity_music_search_btnNext"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:background="@drawable/musicsearch"
-                    android:layout_marginEnd="10dp"/>
-        </LinearLayout>
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/serach_top_llnavigate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/fragment_music_ibBackToMusicHome"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/backtohome"
+            android:contentDescription="@string/back" />
+
+        <SearchView
+            android:id="@+id/activity_music_search_svSearchContext"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/search_shape"
+            android:iconifiedByDefault="false" />
+
+        <Button
+            android:id="@+id/activity_music_search_btnNext"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/musicsearch" />
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/local_music_bottomLayout"
+        android:layout_below="@id/serach_top_llnavigate"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="1dp">
+
+
+        <FrameLayout
+            android:id="@+id/fragment_music_search_fl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </FrameLayout>
+    </androidx.cardview.widget.CardView>
+
+    <include layout="@layout/music_buttom" />
+</RelativeLayout>

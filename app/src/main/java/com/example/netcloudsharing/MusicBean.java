@@ -1,18 +1,25 @@
 package com.example.netcloudsharing;
 
-public class LocalMusicBean {
+public class MusicBean {
     private String id; //歌曲id 1
     private String song; //歌曲名称 2
     private String singer; //歌手名 3
     private String album; //专辑 4
     private String duration; //持续的时间 5
     private String path; //歌曲路径 6
+    private String pic;
 
-    public LocalMusicBean() {
+    public MusicBean(String id, String song, String singer, String album, String duration, String path, String pic) {
+        this.id = id;
+        this.song = song;
+        this.singer = singer;
+        this.album = album;
+        this.duration = duration;
+        this.path = path;
+        this.pic = pic;
     }
 
-
-    public LocalMusicBean(String id, String song, String singer, String album, String duration, String path) {
+    public MusicBean(String id, String song, String singer, String album, String duration, String path) {
         this.id = id;
         this.song = song;
         this.singer = singer;
@@ -68,5 +75,13 @@ public class LocalMusicBean {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic;
+    }
+
+    public String getPic() {
+        return pic;
     }
 }

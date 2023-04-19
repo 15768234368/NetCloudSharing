@@ -1,12 +1,10 @@
 package com.example.netcloudsharing.Fragment;
 
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netcloudsharing.LocalMusicAdapter;
 import com.example.netcloudsharing.MusicBean;
+import com.example.netcloudsharing.Music.HistoryMusicForUserHelper;
 import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.diary.Permission;
 import com.example.netcloudsharing.tool.MusicUtil;
@@ -28,11 +27,10 @@ import java.util.List;
 
 import static com.example.netcloudsharing.Fragment.MainActivity.binder;
 
-public class NewSong_LocalMusicList extends AppCompatActivity implements View.OnClickListener {
+public class NewSong_RecentPlay extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = NewSong_LocalMusicList.class.getSimpleName();
     //三个播放歌曲按钮
     private ImageView nextIv, playIv, lastIv, album, songImage;
-    private ImageButton backIb;
     //歌曲歌手
     private TextView singerTv, songTv;
     private RecyclerView musicRv;
@@ -41,7 +39,7 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
     List<MusicBean> mData;
     //点击正在播放的音乐查看详细信息
     private RelativeLayout relativeLayout;
-
+    private ImageButton recentPlayBackIb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +57,7 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         musicRv.setLayoutManager(layoutManager);
         //加载本地数据源
-        loadLocalMusicData();
+        loadDownloadedMusicData();
         //设置每一项的点击事件
         setEventListener();
         Permission permission = new Permission();
@@ -79,42 +77,33 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
 
 
     /**
-     * 加载本地存储当中的音乐MP3文件到集合中
+     * 加载历史播放记录数据库当中的音乐MP3文件到集合中
      */
-    private void loadLocalMusicData() {
-        //1.获取ContentResolver对象
-        ContentResolver contentResolver = getContentResolver();
-        //2.获取本地音乐的Uri地址
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        //3.开始查询
-        Cursor cursor = contentResolver.query(uri, null, null, null, null);
-        //4.遍历
+    private void loadDownloadedMusicData() {
+        HistoryMusicForUserHelper helper = new HistoryMusicForUserHelper(this);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.query(HistoryMusicForUserHelper.TABLE_NAME, null, null, null, null, null, null);
+
         int id = 0;
         while (cursor.moveToNext()) {
-            //内存里面存的是毫秒
-            long duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-            int minute = (int) (duration / 1000 / 60);
-            int second = (int) (duration / 1000 % 60);
-            if (minute < 1) continue;
             id++;
-            String song = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-            String singer = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-            String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-            String sid = String.valueOf(id);
-            String path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-            String time = String.valueOf(minute) + ":" + String.valueOf(second);
+            String song_id = String.valueOf(id);
+            String song_title = cursor.getString(1);
+            String song_singer = cursor.getString(3);
+            String song_album = cursor.getString(4);
+            String song_path = cursor.getString(8);
+            String time = cursor.getString(7);
             //将一行当中的数据封装到对象中
-            MusicBean bean = new MusicBean(sid, song, singer, album, time, path);
+            MusicBean bean = new MusicBean(song_id, song_title, song_singer, song_album, time, song_path);
             mData.add(bean);
         }
-        //数据源发送变化,提示适配器更新
-        adapter.notifyDataSetChanged();
-        setMusicCount();
+        setRecentPlayedCount();
         cursor.close();
+        db.close();
     }
 
-    public void setMusicCount() {
-        SharedPreferences sp = getSharedPreferences("music_local_count", MODE_PRIVATE);
+    public void setRecentPlayedCount() {
+        SharedPreferences sp = getSharedPreferences("music_recentPlayed_count", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt("count", mData.size());
         editor.apply();
@@ -124,11 +113,10 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
      * 初始化控件的函数
      */
     private void initView() {
+        recentPlayBackIb =findViewById(R.id.activity_localMusicList_ibBack);
         nextIv = findViewById(R.id.local_music_bottom_ivNext);
         playIv = findViewById(R.id.local_music_bottom_ivPlay);
         lastIv = findViewById(R.id.local_music_bottom_ivLast);
-
-        backIb = findViewById(R.id.activity_localMusicList_ibBack);
 
         singerTv = findViewById(R.id.local_music_bottom_tvSinger);
         songTv = findViewById(R.id.local_music_bottom_tvSong);
@@ -138,11 +126,10 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
 
         relativeLayout = findViewById(R.id.local_music_bottomLayout);
 
-        backIb.setOnClickListener(this);
+        recentPlayBackIb.setOnClickListener(this);
         nextIv.setOnClickListener(this);
         lastIv.setOnClickListener(this);
         playIv.setOnClickListener(this);
-
 
         relativeLayout.setOnClickListener(this);
 
@@ -182,7 +169,7 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
                 setMusicBean(binder.getMusicBean());
                 break;
             case R.id.local_music_bottomLayout:
-                Intent currentMusicIntent = new Intent(NewSong_LocalMusicList.this, CurrentPlayMusic.class);
+                Intent currentMusicIntent = new Intent(NewSong_RecentPlay.this, CurrentPlayMusic.class);
                 startActivity(currentMusicIntent);
                 break;
         }

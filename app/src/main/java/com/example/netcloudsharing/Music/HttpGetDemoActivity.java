@@ -83,18 +83,18 @@ public class HttpGetDemoActivity extends Activity {
         public void onClick(View v) {
             // TODO Auto-generated method stub
             switch (v.getId()) {
-                case R.id.btn_play:
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                binder.playNetMusicBySearch(pathText);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
-                    break;
+//                case R.id.btn_play:
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                binder.playNetMusicBySearch(pathText);
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }).start();
+//                    break;
                 case R.id.btn_pause:
                     //暂停
                     binder.pauseMusic();

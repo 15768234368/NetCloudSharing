@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.netcloudsharing.LocalMusicBean;
+import com.example.netcloudsharing.MusicBean;
 import com.example.netcloudsharing.Music.MusicSearch;
 import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.tool.MusicUtil;
@@ -51,6 +51,8 @@ public class FragmentMusic extends Fragment implements View.OnClickListener {
     private ImageButton ibSearch;
     //点击正在播放的音乐查看详细信息
     private RelativeLayout relativeLayout;
+
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -165,10 +167,10 @@ public class FragmentMusic extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void setMusicBean(LocalMusicBean bean) {
+    public void setMusicBean(MusicBean bean) {
         singerTv.setText(bean.getSinger());
         songTv.setText(bean.getSong());
-        MusicUtil.setAlbumImage(songImage, binder.getCurrentSongAlbumPath());
+        MusicUtil.setAlbumImage(songImage, binder.getBitmap());
         if (binder.isMusicPlaying()) {
             playIv.setImageResource(R.mipmap.icon_pause);
         } else {
@@ -234,7 +236,7 @@ public class FragmentMusic extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        if (binder != null) {
+        if (binder != null && binder.getMusicBean() != null) {
             setMusicBean(binder.getMusicBean());
         }
     }

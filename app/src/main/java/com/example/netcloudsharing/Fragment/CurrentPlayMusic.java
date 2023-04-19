@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.netcloudsharing.LocalMusicBean;
+import com.example.netcloudsharing.MusicBean;
 import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.tool.MusicUtil;
 
@@ -125,13 +125,13 @@ public class CurrentPlayMusic extends AppCompatActivity {
             songImage.clearAnimation();
             btnPlay.setBackgroundResource(R.drawable.ic_play_arrow_black_24dp);
         }
-        LocalMusicBean bean = null;
+        MusicBean bean = null;
         if(binder != null)
             bean = binder.getMusicBean();
         if(bean != null){
             songTitle.setText(bean.getSong());
             singer.setText(bean.getSinger());
-            MusicUtil.setAlbumImage(songImage, binder.getCurrentSongAlbumPath());
+            MusicUtil.setAlbumImage(songImage, binder.getBitmap());
         }
     }
 

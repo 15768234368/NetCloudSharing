@@ -13,7 +13,7 @@ import java.util.List;
 
 public class LocalMusicAdapter extends RecyclerView.Adapter<LocalMusicAdapter.LocalMusicViewHolder> {
     Context context;
-    List<LocalMusicBean> mDatas;
+    List<MusicBean> mDatas;
     OnItemClickListener onItemClickListener;
 
     public interface OnItemClickListener {
@@ -24,7 +24,7 @@ public class LocalMusicAdapter extends RecyclerView.Adapter<LocalMusicAdapter.Lo
         this.onItemClickListener = onItemClickListener;
     }
 
-    public LocalMusicAdapter(Context context, List<LocalMusicBean> mDatas) {
+    public LocalMusicAdapter(Context context, List<MusicBean> mDatas) {
         this.context = context;
         this.mDatas = mDatas;
     }
@@ -40,7 +40,7 @@ public class LocalMusicAdapter extends RecyclerView.Adapter<LocalMusicAdapter.Lo
     @Override
     public void onBindViewHolder(@NonNull LocalMusicViewHolder holder, final int position) {
         //绑定viewholder，并且对每一个控件来进行赋值展示
-        LocalMusicBean musicBean = mDatas.get(position);
+        MusicBean musicBean = mDatas.get(position);
         holder.idTv.setText(musicBean.getId());
         holder.songTv.setText(musicBean.getSong());
         holder.singerTv.setText(musicBean.getSinger());
