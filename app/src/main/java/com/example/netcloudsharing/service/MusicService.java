@@ -1,7 +1,6 @@
 package com.example.netcloudsharing.service;
 
 import android.app.Service;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -11,14 +10,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.netcloudsharing.Music.HistoryMusicForUserHelper;
+import com.example.netcloudsharing.Music.LocalMusicDBHelper;
 import com.example.netcloudsharing.MusicBean;
 import com.example.netcloudsharing.User.UserBean;
 import com.example.netcloudsharing.tool.BitmapListener;
@@ -108,6 +106,10 @@ public class MusicService extends Service {
         }
 
         public void playNetMusicBySearch(final MusicBean bean) throws IOException {
+            if(bean.getPath() == null){
+                bean.setPath(MusicUtil.getUrlByNetMusicRid(bean.getRid()));
+                Log.d(TAG, "playNetMusicBySearch: URL" + bean.getPath());
+            }
             stopMusic();
             mediaPlayer.reset(); // 先重置MediaPlayer对象
             binder.setCurrentNetBean(bean);
@@ -121,7 +123,7 @@ public class MusicService extends Service {
                     mp.start(); // 等位图加载完成后，开始播放音乐
                 }
             });
-
+            Log.d(TAG, "playNetMusicBySearch: " + bean.getPic());
             MusicUtil.getBitmapFromUrl(bean.getPic(), new BitmapListener() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap) {
@@ -278,8 +280,7 @@ public class MusicService extends Service {
         }
 
         public MusicBean getMusicBean() {
-            if(currentPlayPosition < 0 || currentPlayPosition > mData.size() - 1) return null;
-            return mData.get(currentPlayPosition);
+            return currentBean;
         }
 
         /**
@@ -311,8 +312,8 @@ public class MusicService extends Service {
         //恢复上次关闭程序的播放位置
         SharedPreferences sp = getSharedPreferences("lastMusicPlayPosition", MODE_PRIVATE);
         currentPlayPosition = sp.getInt("lastMusicPlayPosition", -1);
-//        设置播放完成后自动播放下一曲
-        setAutoMusic();
+//      设置播放完成后自动播放下一曲
+//        setAutoMusic();
         if(currentPlayPosition >= 0 && currentPlayPosition < mData.size())
         currentBean = mData.get(currentPlayPosition);
     }
@@ -321,23 +322,23 @@ public class MusicService extends Service {
     /**
      * 播放完成后自动播放下一曲
      */
-    private void setAutoMusic() {
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                if (currentPlayPosition == mData.size() - 1) {
-                    Log.d(TAG, "onCompletion: ");
-                    Toast.makeText(getApplicationContext(), "最后一首歌曲啦，请重新播放", Toast.LENGTH_SHORT).show();
-                    currentPlayPosition = 0;
-                    binder.stopMusic();
-                } else {
-                    currentPlayPosition++;
-                    binder.playMusicPosition(currentPlayPosition);
-
-                }
-            }
-        });
-    }
+//    private void setAutoMusic() {
+//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(MediaPlayer mp) {
+//                if (currentPlayPosition == mData.size() - 1) {
+//                    Log.d(TAG, "onCompletion: ");
+//                    Toast.makeText(getApplicationContext(), "最后一首歌曲啦，请重新播放", Toast.LENGTH_SHORT).show();
+//                    currentPlayPosition = 0;
+//                    binder.stopMusic();
+//                } else {
+//                    currentPlayPosition++;
+//                    binder.playMusicPosition(currentPlayPosition);
+//
+//                }
+//            }
+//        });
+//    }
 
     @Override
     public void onDestroy() {
@@ -359,33 +360,29 @@ public class MusicService extends Service {
      * 加载本地存储当中的音乐MP3文件到集合中
      */
     private void loadLocalMusicData() {
-        //1.获取ContentResolver对象
-        ContentResolver contentResolver = getContentResolver();
-        //2.获取本地音乐的Uri地址
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        //3.开始查询
-        Cursor cursor = contentResolver.query(uri, null, null, null, null);
+        LocalMusicDBHelper helper = new LocalMusicDBHelper(this);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.query(LocalMusicDBHelper.TABLE_NAME_LOCALMUSICINFO, null, null, null, null, null, null);
+
         //4.遍历
         int id = 0;
         while (cursor.moveToNext()) {
-            //内存里面存的是毫秒
-            long duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-            int minute = (int) (duration / 1000 / 60);
-            int second = (int) (duration / 1000 % 60);
-            if (minute < 1) continue;
             id++;
-            String song = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-            String singer = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-            String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
             String sid = String.valueOf(id);
-            String path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-            String time = String.valueOf(minute) + ":" + String.valueOf(second);
+            int lid = cursor.getInt(1);
+            String songName = cursor.getString(2);
+            String artist = cursor.getString(3);
+            String album = cursor.getString(4);
+            String duration = cursor.getString(5);
+            String path = cursor.getString(6);
             //将一行当中的数据封装到对象中
-            MusicBean bean = new MusicBean(sid, song, singer, album, time, path);
+            MusicBean bean = new MusicBean(sid, songName, artist, album, duration, path, false, lid);
             mData.add(bean);
         }
+        //数据源发送变化,提示适配器更新
         cursor.close();
-
+        helper.close();
+        db.close();
     }
 
 

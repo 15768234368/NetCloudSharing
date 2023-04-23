@@ -16,7 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Fragment.NewSong_RecentPlay"></activity>
+        <activity android:name=".activity.MusicSetActivity"></activity>
+        <activity android:name=".Fragment.NewSong_FavourMusic" />
+        <activity android:name=".Fragment.NewSong_DayRecommend" />
+        <activity android:name=".Fragment.NewSong_RankingList" />
+        <activity android:name=".Fragment.NewSong_RecentPlay" />
         <activity android:name=".Music.DownloadedMusicActivity" />
         <activity android:name=".Fragment.CurrentPlayMusic" />
 

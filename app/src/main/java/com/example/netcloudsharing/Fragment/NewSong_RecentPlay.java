@@ -94,7 +94,7 @@ public class NewSong_RecentPlay extends AppCompatActivity implements View.OnClic
             String song_path = cursor.getString(8);
             String time = cursor.getString(7);
             //将一行当中的数据封装到对象中
-            MusicBean bean = new MusicBean(song_id, song_title, song_singer, song_album, time, song_path);
+            MusicBean bean = new MusicBean(song_id, song_title, song_singer, song_album, time, song_path, false, id);
             mData.add(bean);
         }
         setRecentPlayedCount();

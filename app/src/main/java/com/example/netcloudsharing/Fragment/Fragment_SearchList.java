@@ -93,6 +93,7 @@ public class Fragment_SearchList extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         }, 3000); // 延时3秒执行存储音乐信息的操作
+
     }
 
 
@@ -135,11 +136,11 @@ public class Fragment_SearchList extends Fragment {
             String song_title = cursor.getString(2);
             String song_singer = cursor.getString(3);
             String song_album = cursor.getString(5);
-            String song_path = cursor.getString(14);
             String time = cursor.getString(10);
+            int song_rid = cursor.getInt(1);
             String pic = cursor.getString(12);
             //将一行当中的数据封装到对象中
-            MusicBean bean = new MusicBean(song_id, song_title, song_singer, song_album, time, song_path, pic);
+            MusicBean bean = new MusicBean(song_id, song_title, song_singer, song_album, time, song_rid, pic, true);
             mData.add(bean);
         }
         cursor.close();
@@ -166,6 +167,7 @@ public class Fragment_SearchList extends Fragment {
                 setMusicBean(musicBean);
             }
         });
+
     }
 
     public void setMusicBean(MusicBean bean) {

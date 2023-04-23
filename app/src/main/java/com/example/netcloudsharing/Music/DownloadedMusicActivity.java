@@ -21,6 +21,7 @@ import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.diary.Permission;
 import com.example.netcloudsharing.tool.MusicUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,8 +81,10 @@ public class DownloadedMusicActivity extends AppCompatActivity implements View.O
             int minute = (int) (song_duration / 1000 / 60);
             int second = (int) (song_duration / 1000 % 60);
             String time = String.valueOf(minute) + ":" + String.valueOf(second);
+            String pic = cursor.getString(6);
             //将一行当中的数据封装到对象中
-            MusicBean bean = new MusicBean(song_id, song_title, song_singer, song_album, time, song_path);
+            MusicBean bean = new MusicBean(song_id, song_title, song_singer, song_album, time, song_path, false, id);
+            bean.setPic(pic);
             mData.add(bean);
         }
 
@@ -94,7 +97,11 @@ public class DownloadedMusicActivity extends AppCompatActivity implements View.O
             @Override
             public void OnItemClick(View view, int position) {
                 MusicBean musicBean = mData.get(position);
-                binder.playMusicPosition(musicBean);
+                try {
+                    binder.playNetMusicBySearch(musicBean);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 setMusicBean(binder.getMusicBean());
             }
         });

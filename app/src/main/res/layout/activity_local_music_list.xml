@@ -37,15 +37,19 @@
             android:layout_marginRight="20dp"/>
 
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/local_music_rv"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/activity_localMusicList_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/activity_localMusicList_llTop"
+        android:layout_marginTop="10dp"
         android:layout_above="@id/local_music_bottomLayout">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/local_music_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    </androidx.recyclerview.widget.RecyclerView>
 
     <include layout="@layout/music_buttom" />
 </RelativeLayout>

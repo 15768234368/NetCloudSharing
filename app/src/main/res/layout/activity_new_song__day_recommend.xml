@@ -1,47 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/musicSet_title"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/hotList_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        app:cardCornerRadius="1dp"
-        app:contentPadding="10dp">
-
+        app:contentPadding="10dp"
+        app:cardCornerRadius="1dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="热门歌单"
+                android:text="每日推荐"
                 android:textColor="#333333"
-                android:textSize="40sp" />
-
+                android:layout_marginStart="20dp"
+                android:textSize="40sp"/>
             <TextView
-                android:id="@+id/musicSet_updateTime"
+                android:id="@+id/hotList_updateTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
                 android:text="更新时间："
-                android:textColor="#999999" />
+                android:textColor="#999999"
+                android:layout_marginStart="20dp"/>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/musicSet_rv"
+        android:id="@+id/searchNet_music_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/musicSet_title"
-        android:layout_marginTop="10dp">
+        android:layout_below="@id/hotList_title">
 
     </androidx.recyclerview.widget.RecyclerView>
 </RelativeLayout>

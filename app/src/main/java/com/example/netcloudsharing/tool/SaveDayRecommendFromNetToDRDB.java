@@ -14,46 +14,45 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class SaveMusicFromNetToNMDB {
+public class SaveDayRecommendFromNetToDRDB {
     private Context mContext;
-    private static final String TAG = "SaveMusicFromNetToNMDB";
+    private static final String TAG = SaveHotListFromNetToHLDB.class.getSimpleName();
 
-    public SaveMusicFromNetToNMDB(Context mContext) {
+    public SaveDayRecommendFromNetToDRDB(Context mContext) {
         this.mContext = mContext;
     }
-
-    public void saveToDB(String key) {
+    public void saveToDB(){
         KuWoMusicTask task = new KuWoMusicTask();
-        task.execute(key);
+        task.execute();
     }
 
-    private class KuWoMusicTask extends AsyncTask<String, Void, Void> {
+    private class KuWoMusicTask extends AsyncTask<Void, Void, Void> {
 
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected Void doInBackground(Void... voids) {
             Looper.prepare();
             OkHttpClient client = new OkHttpClient();
-            String url = "http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=" + Arrays.toString(params) + "&pn=1&rn=20&httpsStatus=1&reqId=c8a89281-dcdc-11ed-88de-4d8ba9a2a5d9";
+            String url = "http://www.kuwo.cn/api/www/bang/bang/musicList?bangId=93&pn=1&rn=20&httpsStatus=1&reqId=4dd5b1c0-dec4-11ed-9b10-fdb258cf820a";
             Request request = new Request.Builder()
                     .url(url)
-                    .addHeader("Cookie", "Hm_lvt_cdb524f42f0ce19b169a8071123a4797=1681707517; _ga=GA1.2.1592305065.1681707517; _gid=GA1.2.834743108.1681707517; Hm_lpvt_cdb524f42f0ce19b169a8071123a4797=1681707525; kw_token=9SHBJFMMXMO")
-                    .addHeader("csrf", "9SHBJFMMXMO")
+                    .addHeader("Cookie", "_ga=GA1.2.1592305065.1681707517; _gid=GA1.2.105155089.1681892043; Hm_lvt_cdb524f42f0ce19b169a8071123a4797=1681707517,1681892043,1681913595; _gat=1; Hm_lpvt_cdb524f42f0ce19b169a8071123a4797=1681917019; kw_token=VZ86459MR4L")
+                    .addHeader("csrf", "VZ86459MR4L")
                     .addHeader("Host", "www.kuwo.cn")
-                    .addHeader("Referer", "http://www.kuwo.cn/search/list?key=%E5%BC%A0%E6%9D%B0")
-                    .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
+                    .addHeader("Referer", "http://www.kuwo.cn/rankList")
+                    .addHeader("User-Agent", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
                     .build();
+
             try {
                 Response response = client.newCall(request).execute();
                 String responseData = response.body().string();
                 JSONObject jsonObject = new JSONObject(responseData);
-                JSONArray musicList = jsonObject.getJSONObject("data").getJSONArray("list");
+                JSONArray musicList = jsonObject.getJSONObject("data").getJSONArray("musicList");
                 NetMusicInfoDBHelper helper = new NetMusicInfoDBHelper(mContext);
                 SQLiteDatabase db = helper.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -103,7 +102,7 @@ public class SaveMusicFromNetToNMDB {
                     values.put(NetMusicInfoDBHelper.PIC120, pic120);
 
 
-                    String insert_sql = "INSERT OR IGNORE INTO " + NetMusicInfoDBHelper.TABLE_NAME_NET
+                    String insert_sql = "INSERT OR IGNORE INTO " + NetMusicInfoDBHelper.TABLE_NAME_DAYRECOMMEND
                             + " (" + NetMusicInfoDBHelper.MUSIC_RID + "," + NetMusicInfoDBHelper.RID
                             + "," + NetMusicInfoDBHelper.SONGNAME + "," + NetMusicInfoDBHelper.ARTIST
                             + "," + NetMusicInfoDBHelper.ALBUMID + "," + NetMusicInfoDBHelper.ALBUM
@@ -135,5 +134,4 @@ public class SaveMusicFromNetToNMDB {
 
         }
     }
-
 }

@@ -40,7 +40,9 @@ public class FragmentMusic_NewSong extends Fragment implements View.OnClickListe
         thisView.findViewById(R.id.fragment_music_newSong_llLocalSong).setOnClickListener(this);
         thisView.findViewById(R.id.fragment_music_newsong_ibDownloadMusic).setOnClickListener(this);
         thisView.findViewById(R.id.fragment_music_newSong_llRecentlyPlayed).setOnClickListener(this);
-
+        thisView.findViewById(R.id.fragment_music_newsong_ibRankingList).setOnClickListener(this);
+        thisView.findViewById(R.id.fragment_music_newsong_ibDayRecommend).setOnClickListener(this);
+        thisView.findViewById(R.id.fragment_music_newsong_ibFavourMusic).setOnClickListener(this);
     }
 
     @Override
@@ -57,6 +59,18 @@ public class FragmentMusic_NewSong extends Fragment implements View.OnClickListe
             case R.id.fragment_music_newSong_llRecentlyPlayed:
                 Intent recentPlayedIntent = new Intent(getContext(), NewSong_RecentPlay.class);
                 startActivity(recentPlayedIntent);
+                break;
+            case R.id.fragment_music_newsong_ibRankingList:
+                Intent rankingListIntent = new Intent(getContext(), NewSong_RankingList.class);
+                startActivity(rankingListIntent);
+                break;
+            case R.id.fragment_music_newsong_ibDayRecommend:
+                Intent dayRecommendIntent = new Intent(getContext(), NewSong_DayRecommend.class);
+                startActivity(dayRecommendIntent);
+                break;
+            case R.id.fragment_music_newsong_ibFavourMusic:
+                Intent favourMusicIntent = new Intent(getContext(), NewSong_FavourMusic.class);
+                startActivity(favourMusicIntent);
                 break;
         }
     }

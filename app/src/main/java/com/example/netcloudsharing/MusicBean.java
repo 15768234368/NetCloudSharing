@@ -8,8 +8,11 @@ public class MusicBean {
     private String duration; //持续的时间 5
     private String path; //歌曲路径 6
     private String pic;
+    private int rid;
+    private int lid;
+    boolean isNetMusic;
 
-    public MusicBean(String id, String song, String singer, String album, String duration, String path, String pic) {
+    public MusicBean(String id, String song, String singer, String album, String duration, String path, String pic, int rid, int lid, boolean isNetMusic) {
         this.id = id;
         this.song = song;
         this.singer = singer;
@@ -17,17 +20,80 @@ public class MusicBean {
         this.duration = duration;
         this.path = path;
         this.pic = pic;
+        this.rid = rid;
+        this.lid = lid;
+        this.isNetMusic = isNetMusic;
     }
 
-    public MusicBean(String id, String song, String singer, String album, String duration, String path) {
+    /**
+     * 播放网络音乐
+     *
+     * @param id
+     * @param song
+     * @param singer
+     * @param album
+     * @param duration
+     * @param rid
+     * @param pic
+     * @param isNetMusic
+     */
+    public MusicBean(String id, String song, String singer, String album, String duration, int rid, String pic, boolean isNetMusic) {
         this.id = id;
         this.song = song;
         this.singer = singer;
         this.album = album;
         this.duration = duration;
-        this.path = path;
+        this.pic = pic;
+        this.rid = rid;
+        this.isNetMusic = isNetMusic;
     }
 
+    /**
+     * 播放本地音乐
+     *
+     * @param id
+     * @param song
+     * @param singer
+     * @param album
+     * @param duration
+     * @param path
+     * @param isNetMusic
+     * @param lid
+     */
+    public MusicBean(String id, String song, String singer, String album, String duration, String path, boolean isNetMusic, int lid) {
+        this.id = id;
+        this.song = song;
+        this.singer = singer;
+        this.album = album;
+        this.duration = duration;
+        this.lid = lid;
+        this.path = path;
+        this.isNetMusic = isNetMusic;
+    }
+
+    public void setLid(int lid) {
+        this.lid = lid;
+    }
+
+    public int getLid() {
+        return lid;
+    }
+
+    public void setMusicItem(boolean netMusic) {
+        isNetMusic = netMusic;
+    }
+
+    public boolean isNetMusic() {
+        return isNetMusic;
+    }
+
+    public void setRid(int rid) {
+        this.rid = rid;
+    }
+
+    public int getRid() {
+        return rid;
+    }
 
     public String getId() {
         return id;
