@@ -31,7 +31,7 @@
                 android:textSize="20sp" />
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="30dp">
@@ -47,11 +47,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
                 android:text="中文跑步歌单动力节奏"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
-        </LinearLayout>
+                android:textSize="30sp"
+                android:layout_toEndOf="@id/music_set_image"/>
+            <ImageView
+                android:id="@+id/music_set_favour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_favorite_border_black_24dp"
+                android:layout_toEndOf="@id/music_set_image"
+                android:layout_below="@id/music_set_name"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="关注/收藏"
+                android:textSize="15sp"
+                android:layout_toEndOf="@id/music_set_favour"
+                android:layout_alignTop="@id/music_set_favour"
+                android:layout_marginStart="5dp"/>
+        </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/searchNet_music_rv"

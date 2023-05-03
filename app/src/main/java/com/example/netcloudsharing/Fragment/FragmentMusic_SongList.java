@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.netcloudsharing.MusicSetAdapter;
 import com.example.netcloudsharing.R;
-import com.example.netcloudsharing.User.MusicSetBean;
+import com.example.netcloudsharing.MusicSetBean;
 import com.example.netcloudsharing.activity.MusicSetActivity;
 
 import java.util.ArrayList;

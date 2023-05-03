@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".diary.MainActivity"
     android:orientation="vertical"
-    android:background="#F8F8F8">
+    android:background="@drawable/backgroundchanging">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,20 +24,23 @@
             <Button
                 android:id="@+id/btn_text"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
+                android:background="@drawable/backgroundchanging"
                 android:text="文字"/>
             <Button
                 android:id="@+id/btn_img"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
+                android:background="@drawable/backgroundchanging"
                 android:text="图文"/>
             <Button
                 android:id="@+id/btn_video"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
+                android:background="@drawable/backgroundchanging"
                 android:text="视频"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

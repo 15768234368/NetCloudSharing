@@ -14,8 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.netcloudsharing.User.MusicSetBean;
-
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;

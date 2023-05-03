@@ -1,10 +1,9 @@
-package com.example.netcloudsharing.User;
+package com.example.netcloudsharing;
 
 public class MusicSetBean {
     private String photoUrl;
     private String setName;
     private int bangId;
-    private String Url;
 
     public MusicSetBean(String photoUrl, String setName, int bangId) {
         this.photoUrl = photoUrl;
@@ -37,11 +36,4 @@ public class MusicSetBean {
         return bangId;
     }
 
-    public String getUrl() {
-        return Url;
-    }
-
-    public void setUrl(String url) {
-        Url = url;
-    }
 }

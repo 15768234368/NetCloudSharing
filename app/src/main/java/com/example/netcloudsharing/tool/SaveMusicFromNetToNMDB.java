@@ -14,11 +14,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static com.example.netcloudsharing.tool.MusicUtil.closeAllHttp;
 
 public class SaveMusicFromNetToNMDB {
     private Context mContext;
@@ -30,27 +31,49 @@ public class SaveMusicFromNetToNMDB {
 
     public void saveToDB(String key) {
         KuWoMusicTask task = new KuWoMusicTask();
-        task.execute(key);
+        task.execute(key, "0");
+    }
+
+    public void saveToDB(int artistId) {
+        KuWoMusicTask task = new KuWoMusicTask();
+        task.execute(String.valueOf(artistId), "1");
     }
 
     private class KuWoMusicTask extends AsyncTask<String, Void, Void> {
 
-
+        OkHttpClient client;
+        Response response;
         @Override
         protected Void doInBackground(String... params) {
             Looper.prepare();
-            OkHttpClient client = new OkHttpClient();
-            String url = "http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=" + Arrays.toString(params) + "&pn=1&rn=20&httpsStatus=1&reqId=c8a89281-dcdc-11ed-88de-4d8ba9a2a5d9";
-            Request request = new Request.Builder()
-                    .url(url)
-                    .addHeader("Cookie", "Hm_lvt_cdb524f42f0ce19b169a8071123a4797=1681707517; _ga=GA1.2.1592305065.1681707517; _gid=GA1.2.834743108.1681707517; Hm_lpvt_cdb524f42f0ce19b169a8071123a4797=1681707525; kw_token=9SHBJFMMXMO")
-                    .addHeader("csrf", "9SHBJFMMXMO")
-                    .addHeader("Host", "www.kuwo.cn")
-                    .addHeader("Referer", "http://www.kuwo.cn/search/list?key=%E5%BC%A0%E6%9D%B0")
-                    .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
-                    .build();
+            client = new OkHttpClient();
+            String url = null;
+            Request request = null;
+            if (params[1].equals("0")) {
+
+                url = "http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=" + params[0] + "&pn=1&rn=20&httpsStatus=1&reqId=c8a89281-dcdc-11ed-88de-4d8ba9a2a5d9";
+                request = new Request.Builder()
+                        .url(url)
+                        .addHeader("Cookie", "Hm_lvt_cdb524f42f0ce19b169a8071123a4797=1681707517; _ga=GA1.2.1592305065.1681707517; _gid=GA1.2.834743108.1681707517; Hm_lpvt_cdb524f42f0ce19b169a8071123a4797=1681707525; kw_token=9SHBJFMMXMO")
+                        .addHeader("csrf", "9SHBJFMMXMO")
+                        .addHeader("Host", "www.kuwo.cn")
+                        .addHeader("Referer", "http://www.kuwo.cn/search/list?key=%E5%BC%A0%E6%9D%B0")
+                        .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
+                        .build();
+            } else if (params[1].equals("1")) {
+                url = "http://www.kuwo.cn/api/www/artist/artistMusic?artistid=" + params[0] + "&pn=1&rn=20&httpsStatus=1&reqId=daf57270-e216-11ed-9c37-9578d8fef835";
+                request = new Request.Builder()
+                        .url(url)
+                        .addHeader("Cookie", "_ga=GA1.2.1498653801.1682182945; _gid=GA1.2.1543078478.1682282139; Hm_lvt_cdb524f42f0ce19b169a8071123a4797=1681913595,1682180810,1682182943,1682282139; Hm_lpvt_cdb524f42f0ce19b169a8071123a4797=1682330675; kw_token=L4E2I1CR7VC; _gat=1")
+                        .addHeader("csrf", "L4E2I1CR7VC")
+                        .addHeader("Host", "www.kuwo.cn")
+                        .addHeader("Referer", "http://www.kuwo.cn/singer_detail/" + params[0])
+                        .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
+                        .build();
+
+            }
             try {
-                Response response = client.newCall(request).execute();
+                response = client.newCall(request).execute();
                 String responseData = response.body().string();
                 JSONObject jsonObject = new JSONObject(responseData);
                 JSONArray musicList = jsonObject.getJSONObject("data").getJSONArray("list");
@@ -110,19 +133,20 @@ public class SaveMusicFromNetToNMDB {
                             + "," + NetMusicInfoDBHelper.DURATION + "," + NetMusicInfoDBHelper.SCORE100
                             + "," + NetMusicInfoDBHelper.RELEASEDATE + "," + NetMusicInfoDBHelper.SONGTIMEMINUTES
                             + "," + NetMusicInfoDBHelper.ISLISTENFEE + "," + NetMusicInfoDBHelper.PIC
-                            + "," + NetMusicInfoDBHelper.PIC120 + " ) "
+                            + "," + NetMusicInfoDBHelper.PIC120 + "," + NetMusicInfoDBHelper.ARTISTID + " ) "
                             + "VALUES ('" + musicRid + "'," + rid + ",'" + songName + "','" + artist
                             + "'," + albumId + ",'" + album + "'," + duration + "," + score100
                             + ",'" + releaseDate + "','" + songTimeMinutes + "','" + isListenFee
-                            + "','" + pic + "','" + pic120  + "')";
+                            + "','" + pic + "','" + pic120 + "'," + artistId + ")";
                     db.execSQL(insert_sql);
                     Log.d(TAG, "doInBackground: " + rid + ":" + songName + "保存成功");
-
                 }
                 db.close();
                 helper.close();
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
+            }finally {
+                closeAllHttp(client, response);
             }
             Looper.loop();
             return null;

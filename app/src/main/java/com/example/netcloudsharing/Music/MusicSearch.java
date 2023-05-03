@@ -69,7 +69,6 @@ public class MusicSearch extends AppCompatActivity implements View.OnClickListen
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                query = "周杰伦";
                 displaySearchedMusic(query);
                 return false;
             }
@@ -141,6 +140,7 @@ public class MusicSearch extends AppCompatActivity implements View.OnClickListen
 
     @Override
     protected void onResume() {
+
         super.onResume();
         setMusicBean(binder.getCurrentNetBean());
     }

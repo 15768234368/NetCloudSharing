@@ -29,10 +29,10 @@
     <string name="vline">|</string>
     <string name="birthday">8月1日</string>
     <string name="constellation">狮子座</string>
-    <string name="address">现居</string>
+    <string name="address">现居：</string>
     <string name="addressValue">广东湛江</string>
     <string name="leadTo">＞</string>
-    <string name="comeFromGuangDong">来自广东</string>
+    <string name="comeFromGuangDong">广东</string>
     <string name="qqEmail">1040813130@qq.com</string>
     <string name="personProfile">smile again smile forever</string>
     <string name="paymentCenter">支付中心</string>

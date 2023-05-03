@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.util.Log;
+import android.webkit.CookieManager;
 
 import com.example.netcloudsharing.Music.NetMusicInfoDBHelper;
 
@@ -18,11 +19,26 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.example.netcloudsharing.tool.MusicUtil.closeAllHttp;
+
 public class SaveMusicSetFromNetToMSDB {
     private Context mContext;
     private static final String TAG = "SaveMusicSetFromNetToMS";
     private int bangId;
     private String setName;
+
+    public void setmContext(Context mContext) {
+        this.mContext = mContext;
+    }
+
+    public void setBangId(int bangId) {
+        this.bangId = bangId;
+    }
+
+    public void setSetName(String setName) {
+        this.setName = setName;
+    }
+
     public SaveMusicSetFromNetToMSDB(Context mContext, int bangId, String setName) {
         this.mContext = mContext;
         this.bangId = bangId;
@@ -35,11 +51,12 @@ public class SaveMusicSetFromNetToMSDB {
     }
 
     private class KuWoMusicTask extends AsyncTask<Void, Void, Void> {
-
+        OkHttpClient client;
+        Response response;
         @Override
         protected Void doInBackground(Void... voids) {
             Looper.prepare();
-            OkHttpClient client = new OkHttpClient();
+            client = new OkHttpClient();
             String url = "http://www.kuwo.cn/api/www/bang/bang/musicList?bangId=" + bangId + "&pn=1&rn=20&httpsStatus=1&reqId=60130810-e1df-11ed-9a30-ab12ee7dc9a1";
             Request request = new Request.Builder()
                     .url(url)
@@ -50,7 +67,7 @@ public class SaveMusicSetFromNetToMSDB {
                     .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.95 Safari/537.36")
                     .build();
             try {
-                Response response = client.newCall(request).execute();
+                response = client.newCall(request).execute();
                 String responseData = response.body().string();
                 JSONObject jsonObject = new JSONObject(responseData);
                 JSONArray musicList = jsonObject.getJSONObject("data").getJSONArray("musicList");
@@ -102,8 +119,13 @@ public class SaveMusicSetFromNetToMSDB {
                     db.execSQL(insert_sql);
                     Log.d(TAG, "doInBackground: " + bangId + ":" + setName + "保存成功");
                 }
+                db.close();
+                helper.close();
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
+            }finally {
+                closeAllHttp(client, response);
+                CookieManager.getInstance().setCookie(url, "");
             }
             Looper.loop();
             return null;

@@ -311,7 +311,10 @@ public class MusicService extends Service {
 
         //恢复上次关闭程序的播放位置
         SharedPreferences sp = getSharedPreferences("lastMusicPlayPosition", MODE_PRIVATE);
-        currentPlayPosition = sp.getInt("lastMusicPlayPosition", -1);
+        currentPlayPosition = sp.getInt("lastMusicPlayPosition", 0);
+        if(currentPlayPosition < 0)
+            currentPlayPosition = 0;
+        Log.d(TAG, "onCreate: " +currentPlayPosition);
 //      设置播放完成后自动播放下一曲
 //        setAutoMusic();
         if(currentPlayPosition >= 0 && currentPlayPosition < mData.size())

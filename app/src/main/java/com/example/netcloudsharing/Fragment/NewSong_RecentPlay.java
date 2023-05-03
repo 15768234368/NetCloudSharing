@@ -57,7 +57,7 @@ public class NewSong_RecentPlay extends AppCompatActivity implements View.OnClic
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         musicRv.setLayoutManager(layoutManager);
         //加载本地数据源
-        loadDownloadedMusicData();
+        loadRecentPlayMusicData();
         //设置每一项的点击事件
         setEventListener();
         Permission permission = new Permission();
@@ -79,7 +79,7 @@ public class NewSong_RecentPlay extends AppCompatActivity implements View.OnClic
     /**
      * 加载历史播放记录数据库当中的音乐MP3文件到集合中
      */
-    private void loadDownloadedMusicData() {
+    private void loadRecentPlayMusicData() {
         HistoryMusicForUserHelper helper = new HistoryMusicForUserHelper(this);
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.query(HistoryMusicForUserHelper.TABLE_NAME, null, null, null, null, null, null);

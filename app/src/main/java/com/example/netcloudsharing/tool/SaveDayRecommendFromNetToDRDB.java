@@ -19,6 +19,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.example.netcloudsharing.tool.MusicUtil.closeAllHttp;
+
 public class SaveDayRecommendFromNetToDRDB {
     private Context mContext;
     private static final String TAG = SaveHotListFromNetToHLDB.class.getSimpleName();
@@ -26,18 +28,20 @@ public class SaveDayRecommendFromNetToDRDB {
     public SaveDayRecommendFromNetToDRDB(Context mContext) {
         this.mContext = mContext;
     }
-    public void saveToDB(){
+
+    public void saveToDB() {
         KuWoMusicTask task = new KuWoMusicTask();
         task.execute();
     }
 
     private class KuWoMusicTask extends AsyncTask<Void, Void, Void> {
-
+        OkHttpClient client;
+        Response response;
 
         @Override
         protected Void doInBackground(Void... voids) {
             Looper.prepare();
-            OkHttpClient client = new OkHttpClient();
+            client = new OkHttpClient();
             String url = "http://www.kuwo.cn/api/www/bang/bang/musicList?bangId=93&pn=1&rn=20&httpsStatus=1&reqId=4dd5b1c0-dec4-11ed-9b10-fdb258cf820a";
             Request request = new Request.Builder()
                     .url(url)
@@ -49,7 +53,7 @@ public class SaveDayRecommendFromNetToDRDB {
                     .build();
 
             try {
-                Response response = client.newCall(request).execute();
+                response = client.newCall(request).execute();
                 String responseData = response.body().string();
                 JSONObject jsonObject = new JSONObject(responseData);
                 JSONArray musicList = jsonObject.getJSONObject("data").getJSONArray("musicList");
@@ -113,7 +117,7 @@ public class SaveDayRecommendFromNetToDRDB {
                             + "VALUES ('" + musicRid + "'," + rid + ",'" + songName + "','" + artist
                             + "'," + albumId + ",'" + album + "'," + duration + "," + score100
                             + ",'" + releaseDate + "','" + songTimeMinutes + "','" + isListenFee
-                            + "','" + pic + "','" + pic120  + "')";
+                            + "','" + pic + "','" + pic120 + "')";
                     db.execSQL(insert_sql);
                     Log.d(TAG, "doInBackground: " + rid + ":" + songName + "保存成功");
 
@@ -122,6 +126,9 @@ public class SaveDayRecommendFromNetToDRDB {
                 helper.close();
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
+            } finally {
+                closeAllHttp(client, response);
+
             }
             Looper.loop();
             return null;

@@ -261,7 +261,7 @@ public class NewSong_LocalMusicList extends AppCompatActivity implements View.On
     protected void onResume() {
         super.onResume();
         //第二个判断条件是如果还没有播放，则会返回一个错误的值
-        if (binder != null && binder.getCurrentPosition() != -1) {
+        if (binder != null && binder.getCurrentPosition() != -1 && binder.getMusicBean() != null) {
             setMusicBean(binder.getMusicBean());
         }
     }

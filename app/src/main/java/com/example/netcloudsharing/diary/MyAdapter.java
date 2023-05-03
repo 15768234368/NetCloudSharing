@@ -1,9 +1,6 @@
 package com.example.netcloudsharing.diary;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +11,8 @@ import android.widget.TextView;
 import com.example.netcloudsharing.R;
 
 import java.util.List;
+
+import static com.example.netcloudsharing.tool.MusicUtil.getImageThumbnail;
 
 public class MyAdapter extends BaseAdapter {
     private Context context;
@@ -60,38 +59,6 @@ public class MyAdapter extends BaseAdapter {
         return convertView;
     }
 
-    /**
-     * 获取缩略图的方法
-     *
-     * @param uri    路径
-     * @param width  宽
-     * @param height 高
-     * @return 缩略图
-     */
-    public Bitmap getImageThumbnail(String uri, int width, int height) {
-        Bitmap bitmap = null;
-        //获取缩略图
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        bitmap = BitmapFactory.decodeFile(uri, options);
-        options.inJustDecodeBounds = false;
-        int beWidth = options.outWidth / width;
-        int beHeight = options.outHeight / height;
-        int be = 1 ;
-        if (beWidth < beHeight) {
-            be = beWidth;
-        } else {
-            be = beHeight;
-        }
-        if (be <= 0) {
-            be = 1;
-        }
-        options.inSampleSize = be;
-        bitmap = BitmapFactory.decodeFile(uri, options);
-        bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height,
-                ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-        return bitmap;
-    }
 }
 
 class ViewHolder {

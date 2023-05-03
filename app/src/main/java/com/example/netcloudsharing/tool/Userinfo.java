@@ -4,51 +4,136 @@ package com.example.netcloudsharing.tool;
  */
 import java.io.Serializable;
 public class Userinfo implements Serializable{
-    private int id;
-    private String uname;
-    private String upass;
-    private String createDt;
-
+    private String uid;
+    private String pic;
+    private String name;
+    private String account;
+    private String password;
+    private String gender;
+    private String birthday;
+    private String constellation;
+    private String nowLive;
+    private String birthplace;
+    private String email;
+    private String info;
     public Userinfo() {
     }
 
-    public Userinfo(int id, String uname, String upass, String createDt) {
-        this.id = id;
-        this.uname = uname;
-        this.upass = upass;
-        this.createDt = createDt;
+    public Userinfo(String uid, String pic, String name, String account, String password, String gender, String birthday, String constellation, String nowLive, String birthplace, String email, String info) {
+        this.uid = uid;
+        this.pic = pic;
+        this.name = name;
+        this.account = account;
+        this.password = password;
+        this.gender = gender;
+        this.birthday = birthday;
+        this.constellation = constellation;
+        this.nowLive = nowLive;
+        this.birthplace = birthplace;
+        this.email = email;
+        this.info = info;
     }
 
-    public int getId() {
-        return id;
+    public Userinfo(String uid, String account, String password) {
+        this.uid = uid;
+        this.account = account;
+        this.password = password;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
-    public String getUname() {
-        return uname;
+    public void setPic(String pic) {
+        this.pic = pic;
     }
 
-    public void setUname(String uname) {
-        this.uname = uname;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getUpass() {
-        return upass;
+    public void setAccount(String account) {
+        this.account = account;
     }
 
-    public void setUpass(String upass) {
-        this.upass = upass;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getCreateDt() {
-        return createDt;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
-    public void setCreateDt(String createDt) {
-        this.createDt = createDt;
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public void setConstellation(String constellation) {
+        this.constellation = constellation;
+    }
+
+    public void setNowLive(String nowLive) {
+        this.nowLive = nowLive;
+    }
+
+    public void setBirthplace(String birthplace) {
+        this.birthplace = birthplace;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public String getPic() {
+        return pic;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public String getConstellation() {
+        return constellation;
+    }
+
+    public String getNowLive() {
+        return nowLive;
+    }
+
+    public String getBirthplace() {
+        return birthplace;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getInfo() {
+        return info;
     }
 }
 

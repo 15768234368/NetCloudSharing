@@ -19,6 +19,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static com.example.netcloudsharing.tool.MusicUtil.closeAllHttp;
+
 public class SaveHotListFromNetToHLDB {
     private Context mContext;
     private static final String TAG = "SaveHotListFromNetToHLD";
@@ -26,18 +28,21 @@ public class SaveHotListFromNetToHLDB {
     public SaveHotListFromNetToHLDB(Context mContext) {
         this.mContext = mContext;
     }
-    public void saveTODB(){
+
+    public void saveTODB() {
         KuWoMusicTask task = new KuWoMusicTask();
         task.execute();
     }
 
     private class KuWoMusicTask extends AsyncTask<Void, Void, Void> {
 
+        OkHttpClient client;
+        Response response;
 
         @Override
         protected Void doInBackground(Void... voids) {
             Looper.prepare();
-            OkHttpClient client = new OkHttpClient();
+            client = new OkHttpClient();
             String url = "http://www.kuwo.cn/api/www/bang/bang/musicList?bangId=16&pn=1&rn=20&httpsStatus=1&reqId=2ce239f0-de8a-11ed-8504-f9d14dec6450";
             Request request = new Request.Builder()
                     .url(url)
@@ -49,7 +54,7 @@ public class SaveHotListFromNetToHLDB {
                     .build();
 
             try {
-                Response response = client.newCall(request).execute();
+                response = client.newCall(request).execute();
                 String responseData = response.body().string();
                 JSONObject jsonObject = new JSONObject(responseData);
                 JSONArray musicList = jsonObject.getJSONObject("data").getJSONArray("musicList");
@@ -113,19 +118,23 @@ public class SaveHotListFromNetToHLDB {
                             + "VALUES ('" + musicRid + "'," + rid + ",'" + songName + "','" + artist
                             + "'," + albumId + ",'" + album + "'," + duration + "," + score100
                             + ",'" + releaseDate + "','" + songTimeMinutes + "','" + isListenFee
-                            + "','" + pic + "','" + pic120  + "')";
+                            + "','" + pic + "','" + pic120 + "')";
                     db.execSQL(insert_sql);
                     Log.d(TAG, "doInBackground: " + rid + ":" + songName + "保存成功");
 
                 }
                 db.close();
                 helper.close();
+
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
+            }finally {
+                closeAllHttp(client, response);
             }
             Looper.loop();
             return null;
         }
+
 
         @Override
         protected void onPostExecute(Void aVoid) {

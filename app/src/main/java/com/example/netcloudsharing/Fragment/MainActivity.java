@@ -8,8 +8,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -22,8 +24,8 @@ import com.example.netcloudsharing.service.MusicService;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private FragmentMusic fragmentMusic;
-    private FragmentCommunity fragmentCommunity;
-    private FragmentMessage fragmentMessage;
+    private FragmentAllSinger fragmentAllSinger;
+    private FragmentComment fragmentComment;
     private FragmentMy fragmentMy;
 
 
@@ -35,11 +37,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static MusicService.MyBinder binder;
     private myConn conn;
+    /**
+     * value = 0 ： 游客
+     * value = 1 : 用户
+     */
+    public static int login_type;
 
+    public static String uid = null;
+    public static String account = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent dataIntent = getIntent();
+        login_type = dataIntent.getIntExtra("login_type", 0);
+        if(login_type == 1){
+            uid = dataIntent.getStringExtra("uid"); //不是游客，是用登录进来的
+            account = dataIntent.getStringExtra("account");
+        }
         initView();//初始化控件
         initEvent();//初始化事件
         if(binder == null){
@@ -67,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initView() {
         //初始化ImageButton布局文件
         mImg1 = findViewById(R.id.ib_tab_home);
-        mImg2 = findViewById(R.id.ib_tab_community);
+        mImg2 = findViewById(R.id.ib_tab_allSinger);
         mImg3 = findViewById(R.id.ib_tab_message);
         mImg4 = findViewById(R.id.ib_tab_my);
 
@@ -81,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.ib_tab_home:
                 selectTab(0);
                 break;
-            case R.id.ib_tab_community:
+            case R.id.ib_tab_allSinger:
                 selectTab(1);
                 break;
             case R.id.ib_tab_message:
@@ -115,20 +130,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case 1:
                 mImg2.setImageResource(R.drawable.select_community);
-                if (fragmentCommunity == null) {
-                    fragmentCommunity = new FragmentCommunity();
-                    transaction.add(R.id.fl_content, fragmentCommunity);
+                if (fragmentAllSinger == null) {
+                    fragmentAllSinger = new FragmentAllSinger();
+                    transaction.add(R.id.fl_content, fragmentAllSinger);
                 } else {
-                    transaction.show(fragmentCommunity);
+                    transaction.show(fragmentAllSinger);
                 }
                 break;
             case 2:
                 mImg3.setImageResource(R.drawable.select_message);
-                if (fragmentMessage == null) {
-                    fragmentMessage = new FragmentMessage();
-                    transaction.add(R.id.fl_content, fragmentMessage);
+                if (fragmentComment == null) {
+                    fragmentComment = new FragmentComment();
+                    transaction.add(R.id.fl_content, fragmentComment);
                 } else {
-                    transaction.show(fragmentMessage);
+                    transaction.show(fragmentComment);
                 }
                 break;
             case 3:
@@ -150,11 +165,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (fragmentMusic != null) {
             transaction.hide(fragmentMusic);
         }
-        if (fragmentCommunity != null) {
-            transaction.hide(fragmentCommunity);
+        if (fragmentAllSinger != null) {
+            transaction.hide(fragmentAllSinger);
         }
-        if (fragmentMessage != null) {
-            transaction.hide(fragmentMessage);
+        if (fragmentComment != null) {
+            transaction.hide(fragmentComment);
         }
         if (fragmentMy != null) {
             transaction.hide(fragmentMy);
@@ -193,6 +208,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         edit.commit();
 
         super.onDestroy();
+    }
+
+    private long exitTime = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK
+                && event.getAction() == KeyEvent.ACTION_DOWN) {
+
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                Toast.makeText(getApplicationContext(), "再按一次退出程序",
+                        Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+                System.exit(0);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
 }

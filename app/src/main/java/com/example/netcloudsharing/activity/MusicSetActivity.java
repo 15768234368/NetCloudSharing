@@ -1,5 +1,6 @@
 package com.example.netcloudsharing.activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netcloudsharing.LocalMusicAdapter;
+import com.example.netcloudsharing.Music.FavourListDBHelper;
 import com.example.netcloudsharing.Music.NetMusicInfoDBHelper;
 import com.example.netcloudsharing.MusicBean;
 import com.example.netcloudsharing.MusicSetAdapter;
@@ -36,7 +38,9 @@ public class MusicSetActivity extends AppCompatActivity {
     private RecyclerView musicRv;
     private ImageView musicSetImage_iv;
     private TextView musicSetName_tv;
-    private ImageView musicSetBack_iv;
+    private ImageView musicSetBack_iv, musicSetFavour_iv;
+    private boolean isFavourMusicSet = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +67,7 @@ public class MusicSetActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         //设置每一项的点击事件
         setEventListener();
-
+        setIsFavour();
         loadView();
     }
 
@@ -90,6 +94,8 @@ public class MusicSetActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         musicSetName_tv.setText(musicSetName);
+                        if (isFavourMusicSet)
+                            musicSetFavour_iv.setImageResource(R.drawable.ic_favorite_black_24dp);
                     }
                 });
             }
@@ -111,6 +117,28 @@ public class MusicSetActivity extends AppCompatActivity {
                         }
                     }
                 }).start();
+            }
+        });
+
+        musicSetFavour_iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FavourListDBHelper helper_favour = new FavourListDBHelper(getApplicationContext());
+                SQLiteDatabase db_favour = helper_favour.getWritableDatabase();
+                if (isFavourMusicSet) {
+                    db_favour.delete(FavourListDBHelper.TABLE_NAME_FAVOURMUSICSET, "bangId=?", new String[]{String.valueOf(bangId)});
+                    musicSetFavour_iv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                } else {
+                    ContentValues values = new ContentValues();
+                    values.put(FavourListDBHelper.BANGID, bangId);
+                    values.put(FavourListDBHelper.MUSICSETNAME, musicSetName);
+                    values.put(FavourListDBHelper.MUSICSETPHOTO, photoSetUrl);
+                    db_favour.insert(FavourListDBHelper.TABLE_NAME_FAVOURMUSICSET, null, values);
+                    isFavourMusicSet = true;
+                    musicSetFavour_iv.setImageResource(R.drawable.ic_favorite_black_24dp);
+                }
+                db_favour.close();
+                helper_favour.close();
             }
         });
     }
@@ -160,5 +188,26 @@ public class MusicSetActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        musicSetFavour_iv = (ImageView) findViewById(R.id.music_set_favour);
+    }
+
+    private void setIsFavour() {
+        FavourListDBHelper helper_favour = new FavourListDBHelper(getApplicationContext());
+        SQLiteDatabase db_favour = helper_favour.getReadableDatabase();
+        Cursor cursor = db_favour.query(FavourListDBHelper.TABLE_NAME_FAVOURMUSICSET, null, "bangId=?", new String[]{String.valueOf(bangId)}, null, null, null, null);
+        isFavourMusicSet = cursor.getCount() == 1;
+        cursor.close();
+        db_favour.close();
+        helper_favour.close();
+    }
+
+    @Override
+    protected void onResume() {
+        if (isFavourMusicSet)
+            musicSetFavour_iv.setImageResource(R.drawable.ic_favorite_black_24dp);
+        else
+            musicSetFavour_iv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+        super.onResume();
     }
 }
