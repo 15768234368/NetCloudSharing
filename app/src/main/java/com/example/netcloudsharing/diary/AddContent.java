@@ -86,6 +86,9 @@ public class AddContent extends AppCompatActivity implements View.OnClickListene
         btnBack.setOnClickListener(this);
     }
 
+    /**
+     * 新增记录至生活记录数据库中
+     */
     public void addDB() {
         ContentValues cv = new ContentValues();
         cv.put(NotesDB.CONTENT, etText.getText().toString());

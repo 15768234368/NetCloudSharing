@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp">
+    <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginRight="10dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="1dp"
+        app:contentPadding="1dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp">
+
+            <ImageView
+                android:id="@+id/artist_homePage_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/music" />
+
+            <TextView
+                android:id="@+id/artist_homePage_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_toEndOf="@id/artist_homePage_image"
+                android:ellipsize="end"
+                android:maxLength="5"
+                android:text="余水水"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/artist_homePage_artistFans"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/artist_homePage_name"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@id/artist_homePage_name"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="粉丝:152.6W"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/artist_homePage_musicNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/artist_homePage_name"
+                android:layout_alignLeft="@id/artist_homePage_name"
+                android:layout_marginTop="7dp"
+                android:layout_toEndOf="@id/artist_homePage_image"
+                android:text="单曲：1581" />
+
+            <TextView
+                android:id="@+id/artist_homePage_albumNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/artist_homePage_musicNum"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@id/artist_homePage_musicNum"
+                android:text="专辑：38" />
+
+            <TextView
+                android:id="@+id/artist_homePage_mvNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/artist_homePage_albumNum"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@id/artist_homePage_albumNum"
+                android:text="MV：500" />
+
+            <TextView
+                android:id="@+id/artist_homePage_aartist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/artist_homePage_musicNum"
+                android:layout_alignLeft="@id/artist_homePage_musicNum"
+                android:layout_marginTop="7dp"
+                android:text="英文名：MU YU" />
+
+            <TextView
+                android:id="@+id/artist_homePage_country"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/artist_homePage_aartist"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@id/artist_homePage_aartist"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="国籍：中国" />
+
+            <TextView
+                android:id="@+id/artist_homePage_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/artist_homePage_aartist"
+                android:layout_alignLeft="@id/artist_homePage_aartist"
+                android:layout_marginTop="7dp"
+                android:layout_toStartOf="@id/artist_homePage_allInfo"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="个人简介：只要雨还在下，小狗还在摇尾巴" />
+
+            <TextView
+                android:id="@+id/artist_homePage_allInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/artist_homePage_info"
+                android:layout_alignParentEnd="true"
+                android:text="全部 >"
+                android:textColor="#296394" />
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>

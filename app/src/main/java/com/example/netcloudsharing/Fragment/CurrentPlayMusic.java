@@ -238,6 +238,10 @@ public class CurrentPlayMusic extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    /**
+     * 将歌曲添加至收藏，分为本地音乐和网络音乐
+     * @param musicBean 音乐的基本信息
+     */
     private void addToFavourList(MusicBean musicBean) {
         FavourListDBHelper helper = new FavourListDBHelper(this);
         SQLiteDatabase db = helper.getReadableDatabase();

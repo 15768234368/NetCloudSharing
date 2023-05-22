@@ -109,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
+    /**
+     * 保存照片
+     */
     public void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //必须确保手机上有相机，才可以继续，否则会一直闪退，故加判断语句
@@ -128,6 +131,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * 获得文件路径
+     */
     private File createImageFile() throws IOException {
         //Create an image file name
         String imageFileName = getTimeToPath();
@@ -143,6 +149,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return image;
     }
 
+    /**
+     * 通过当前时间获得文件名
+     */
     public String getTimeToPath() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA);
         Date curDate = new Date();

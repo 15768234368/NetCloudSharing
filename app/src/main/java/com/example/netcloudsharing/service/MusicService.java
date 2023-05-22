@@ -105,6 +105,11 @@ public class MusicService extends Service {
                 playMusicPosition(mData.get(position));
         }
 
+        /**
+         * 播放从网络上搜索到的歌曲
+         * @param bean 播放歌曲的基本信息
+         * @throws IOException 抛出的异常
+         */
         public void playNetMusicBySearch(final MusicBean bean) throws IOException {
             if(bean.getPath() == null){
                 bean.setPath(MusicUtil.getUrlByNetMusicRid(bean.getRid()));
@@ -171,6 +176,11 @@ public class MusicService extends Service {
 
         }
 
+        /**
+         * 新增用户历史播放记录
+         * @param musicBean 播放歌曲的基本信息
+         * @param userBean 播放歌曲的用户
+         */
         private void writeTrackOfMusic(MusicBean musicBean, UserBean userBean) {
             HistoryMusicForUserHelper helper = new HistoryMusicForUserHelper(getApplicationContext());
             SQLiteDatabase db = helper.getWritableDatabase();

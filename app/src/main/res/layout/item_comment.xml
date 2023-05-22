@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+    <ImageView
+        android:id="@+id/item_comment_userImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/music"/>
+    <TextView
+        android:id="@+id/item_comment_userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="一支渔"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_toEndOf="@id/item_comment_userImage"
+        android:layout_marginStart="20dp"
+ />
+    <TextView
+        android:id="@+id/item_comment_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="等天晴：爽歪歪!"
+        android:textColor="@color/black"
+        android:layout_toEndOf="@id/item_comment_userImage"
+        android:layout_below="@id/item_comment_userName"
+        android:layout_alignLeft="@id/item_comment_userName"
+        android:layout_marginTop="5dp"/>
+    <TextView
+        android:id="@+id/item_comment_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2023-04-23 10:28:51"
+        android:layout_below="@id/item_comment_msg"
+        android:layout_alignLeft="@id/item_comment_msg"
+        android:layout_marginTop="5dp"/>
+
+</RelativeLayout>

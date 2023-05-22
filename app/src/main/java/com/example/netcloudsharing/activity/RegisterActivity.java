@@ -59,6 +59,11 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * @param uid 系统自动生成的唯一标识符
+     * @param account 用户账号
+     * @param password 用户密码
+     */
     private void register(final String uid, final String account, final String password) {
         if (TextUtils.isEmpty(account)) {
             BaseTool.showShortMsg(RegisterActivity.this, getString(R.string.please_input_account));
