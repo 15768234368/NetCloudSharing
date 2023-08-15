@@ -13,9 +13,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.netcloudsharing.ArtistBean;
-import com.example.netcloudsharing.ArtistListAdapter;
-import com.example.netcloudsharing.LocalMusicAdapter;
+import com.example.netcloudsharing.Bean.ArtistBean;
+import com.example.netcloudsharing.adapter.ArtistListAdapter;
+import com.example.netcloudsharing.adapter.LocalMusicAdapter;
 import com.example.netcloudsharing.R;
 
 import java.io.InputStream;

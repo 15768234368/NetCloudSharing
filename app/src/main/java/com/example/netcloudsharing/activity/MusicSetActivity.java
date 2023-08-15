@@ -1,108 +1,117 @@
 package com.example.netcloudsharing.activity;
 
-import android.content.ContentValues;
+import static com.example.netcloudsharing.MainActivity.binder;
+
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.netcloudsharing.LocalMusicAdapter;
-import com.example.netcloudsharing.Music.FavourListDBHelper;
-import com.example.netcloudsharing.Music.NetMusicInfoDBHelper;
-import com.example.netcloudsharing.MusicBean;
-import com.example.netcloudsharing.MusicSetAdapter;
+import com.example.netcloudsharing.Bean.MusicBean;
+import com.example.netcloudsharing.Bean.MusicSetBean;
 import com.example.netcloudsharing.R;
-import com.example.netcloudsharing.tool.SaveMusicSetFromNetToMSDB;
+import com.example.netcloudsharing.adapter.LocalMusicAdapter;
+import com.example.netcloudsharing.task.MusicFromSetTask;
+import com.example.netcloudsharing.tool.BaseTool;
+import com.example.netcloudsharing.tool.MusicUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.netcloudsharing.Fragment.MainActivity.binder;
-import static com.example.netcloudsharing.MusicSetAdapter.getBitmapFromUrl;
-
 public class MusicSetActivity extends AppCompatActivity {
-    List<MusicBean> mData;
-    String photoSetUrl;
-    String musicSetName;
-    int bangId;
+    private static final String TAG = "MusicSetActivity";
+    private TextView singerTv, songTv;
+    //三个播放歌曲按钮
+    private ImageView nextIv, playIv, lastIv, album, songImage;
+    private String href;
+    private String pic;
+    private String title;
+    private ImageView iv_setPic;
+    private TextView tv_setTitle;
+    private RecyclerView recyclerView;
+    private List<MusicBean> mData;
     private LocalMusicAdapter adapter;
-    private RecyclerView musicRv;
-    private ImageView musicSetImage_iv;
-    private TextView musicSetName_tv;
-    private ImageView musicSetBack_iv, musicSetFavour_iv;
-    private boolean isFavourMusicSet = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_set);
-        initView();
         Intent intent = getIntent();
-        photoSetUrl = intent.getStringExtra("photoSet");
-        musicSetName = intent.getStringExtra("musicSetName");
-        bangId = intent.getIntExtra("bangId", 0);
-
-        SaveMusicSetFromNetToMSDB saveMusicSetFromNetToMSDB = new SaveMusicSetFromNetToMSDB(this, bangId, musicSetName);
-        saveMusicSetFromNetToMSDB.saveToDB();
+        href = intent.getStringExtra("href");
+        pic = intent.getStringExtra("pic");
+        title = intent.getStringExtra("title");
+        Log.d(TAG, "SetHref: " + href);
         mData = new ArrayList<>();
+        initView();
+        loadData();
 
-        //getActivity可能有问题！！！
-        adapter = new LocalMusicAdapter(this, mData);
-        musicRv.setAdapter(adapter);
-        //设置布局管理器
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        musicRv.setLayoutManager(layoutManager);
-        //加载本地数据源
-
-        loadMusicSetData();
-        adapter.notifyDataSetChanged();
-        //设置每一项的点击事件
-        setEventListener();
-        setIsFavour();
-        loadView();
     }
 
-    private void loadView() {
-        new Thread(new Runnable() {
+    private void loadData() {
+        MusicFromSetTask musicFromSetTask = new MusicFromSetTask(new MusicFromSetTask.MusicFromSetListener() {
             @Override
-            public void run() {
-                getBitmapFromUrl(photoSetUrl, new MusicSetAdapter.BitmapListener() {
+            public void onSearchComplete(List<MusicBean> musicList) {
+                mData = new ArrayList<>(musicList);
+                adapter = new LocalMusicAdapter(getApplicationContext(), mData);
+                recyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+                adapter.setOnItemClickListener(new LocalMusicAdapter.OnItemClickListener() {
                     @Override
-                    public void onBitmapLoaded(final Bitmap bitmap) {
-                        if (bitmap != null) {
-                            // 在这里使用Bitmap对象更新UI组件
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    musicSetImage_iv.setImageBitmap(bitmap);
+                    public void OnItemClick(View view, int position) {
+                        final MusicBean musicBean = mData.get(position);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    binder.playNetMusicBySearch(musicBean);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-                            });
-                        }
-                    }
-                });
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        musicSetName_tv.setText(musicSetName);
-                        if (isFavourMusicSet)
-                            musicSetFavour_iv.setImageResource(R.drawable.ic_favorite_black_24dp);
+                            }
+                        }).start();
+                        setMusicBean(musicBean);
                     }
                 });
             }
-        }).start();
+
+            @Override
+            public void onSearchError() {
+                Toast.makeText(getApplicationContext(), "网络状态不好，请重试",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        musicFromSetTask.execute(href);
+
     }
 
-    private void setEventListener() {
+    private void initView() {
+        nextIv = findViewById(R.id.local_music_bottom_ivNext);
+        playIv = findViewById(R.id.local_music_bottom_ivPlay);
+        lastIv = findViewById(R.id.local_music_bottom_ivLast);
+
+        singerTv = findViewById(R.id.local_music_bottom_tvSinger);
+        songTv = findViewById(R.id.local_music_bottom_tvSong);
+
+        songImage = findViewById(R.id.local_music_bottom_ivIcon);
+
+        iv_setPic = findViewById(R.id.music_set_image);
+        tv_setTitle = findViewById(R.id.music_set_name);
+
+        recyclerView = findViewById(R.id.musicSet_rv);
+        adapter = new LocalMusicAdapter(this, mData);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         adapter.setOnItemClickListener(new LocalMusicAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(View view, int position) {
@@ -117,97 +126,25 @@ public class MusicSetActivity extends AppCompatActivity {
                         }
                     }
                 }).start();
+                setMusicBean(musicBean);
             }
         });
-
-        musicSetFavour_iv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FavourListDBHelper helper_favour = new FavourListDBHelper(getApplicationContext());
-                SQLiteDatabase db_favour = helper_favour.getWritableDatabase();
-                if (isFavourMusicSet) {
-                    db_favour.delete(FavourListDBHelper.TABLE_NAME_FAVOURMUSICSET, "bangId=?", new String[]{String.valueOf(bangId)});
-                    musicSetFavour_iv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                } else {
-                    ContentValues values = new ContentValues();
-                    values.put(FavourListDBHelper.BANGID, bangId);
-                    values.put(FavourListDBHelper.MUSICSETNAME, musicSetName);
-                    values.put(FavourListDBHelper.MUSICSETPHOTO, photoSetUrl);
-                    db_favour.insert(FavourListDBHelper.TABLE_NAME_FAVOURMUSICSET, null, values);
-                    isFavourMusicSet = true;
-                    musicSetFavour_iv.setImageResource(R.drawable.ic_favorite_black_24dp);
-                }
-                db_favour.close();
-                helper_favour.close();
-            }
-        });
+        //设置封面图片和歌单标题
+        BaseTool.getBitmapFromUrl(this, iv_setPic, pic, 20);
+        tv_setTitle.setText(title);
     }
 
-    private void loadMusicSetData() {
-        new Runnable() {
-
-            @Override
-            public void run() {
-                loadMusicSetDB();
-            }
-        }.run();
-    }
-
-    private void loadMusicSetDB() {
-        NetMusicInfoDBHelper helper = new NetMusicInfoDBHelper(this);
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query(NetMusicInfoDBHelper.TABLE_NAME_MUSICSET, null, "bangId=?", new String[]{String.valueOf(bangId)}, null, null, null, null);
-        int id = 0;
-        while (cursor.moveToNext()) {
-            id++;
-            String song_id = String.valueOf(id);
-            String song_title = cursor.getString(3);
-            String song_singer = cursor.getString(4);
-            String song_album = cursor.getString(6);
-            String time = cursor.getString(11);
-            int song_rid = cursor.getInt(1);
-            String pic = cursor.getString(13);
-            //将一行当中的数据封装到对象中
-            MusicBean bean = new MusicBean(song_id, song_title, song_singer, song_album, time, song_rid, pic, true);
-            mData.add(bean);
+    public void setMusicBean(MusicBean bean) {
+        singerTv.setText(bean.getSinger());
+        songTv.setText(bean.getSong());
+        MusicUtil.setAlbumImage(songImage, binder.getBitmap());
+        if (binder.isMusicPlaying()) {
+            playIv.setImageResource(R.mipmap.icon_pause);
+        } else {
+            playIv.setImageResource(R.mipmap.icon_play);
         }
-        cursor.close();
-        db.close();
-        helper.close();
+
+
     }
 
-    private void initView() {
-        musicRv = (RecyclerView) findViewById(R.id.searchNet_music_rv);
-        musicSetImage_iv = (ImageView) findViewById(R.id.music_set_image);
-        musicSetName_tv = (TextView) findViewById(R.id.music_set_name);
-
-        musicSetBack_iv = (ImageView) findViewById(R.id.music_set_back);
-        musicSetBack_iv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        musicSetFavour_iv = (ImageView) findViewById(R.id.music_set_favour);
-    }
-
-    private void setIsFavour() {
-        FavourListDBHelper helper_favour = new FavourListDBHelper(getApplicationContext());
-        SQLiteDatabase db_favour = helper_favour.getReadableDatabase();
-        Cursor cursor = db_favour.query(FavourListDBHelper.TABLE_NAME_FAVOURMUSICSET, null, "bangId=?", new String[]{String.valueOf(bangId)}, null, null, null, null);
-        isFavourMusicSet = cursor.getCount() == 1;
-        cursor.close();
-        db_favour.close();
-        helper_favour.close();
-    }
-
-    @Override
-    protected void onResume() {
-        if (isFavourMusicSet)
-            musicSetFavour_iv.setImageResource(R.drawable.ic_favorite_black_24dp);
-        else
-            musicSetFavour_iv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-        super.onResume();
-    }
 }

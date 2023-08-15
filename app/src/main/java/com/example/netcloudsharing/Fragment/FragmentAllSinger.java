@@ -16,8 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.example.netcloudsharing.ArtistBean;
-import com.example.netcloudsharing.ArtistListAdapter;
+import com.example.netcloudsharing.Bean.ArtistBean;
+import com.example.netcloudsharing.adapter.ArtistListAdapter;
 import com.example.netcloudsharing.Music.NetMusicInfoDBHelper;
 import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.activity.ArtistActivity;

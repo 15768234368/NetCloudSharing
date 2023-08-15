@@ -13,11 +13,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.netcloudsharing.CommentAdapter;
-import com.example.netcloudsharing.CommentBean;
+import com.example.netcloudsharing.adapter.CommentAdapter;
+import com.example.netcloudsharing.Bean.CommentBean;
 import com.example.netcloudsharing.Music.NetMusicInfoDBHelper;
 import com.example.netcloudsharing.R;
-import com.example.netcloudsharing.tool.SaveMusicCommentFromNetToMCDB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +36,6 @@ public class FragmentComment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        SaveMusicCommentFromNetToMCDB saveMusicCommentFromNetToMCDB = new SaveMusicCommentFromNetToMCDB(getContext());
-        saveMusicCommentFromNetToMCDB.saveToDB();
         initView();
         hotData = new ArrayList<>();
         normalData = new ArrayList<>();

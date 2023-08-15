@@ -23,7 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
-import com.example.netcloudsharing.Fragment.MainActivity;
+import com.example.netcloudsharing.MainActivity;
 import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.diary.Permission;
 import com.example.netcloudsharing.tool.UserDao;

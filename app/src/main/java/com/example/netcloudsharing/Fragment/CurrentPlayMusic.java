@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -20,13 +21,14 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.netcloudsharing.Music.FavourListDBHelper;
-import com.example.netcloudsharing.MusicBean;
+import com.example.netcloudsharing.Bean.MusicBean;
 import com.example.netcloudsharing.R;
+import com.example.netcloudsharing.tool.BaseTool;
 import com.example.netcloudsharing.tool.MusicUtil;
 
 import java.util.UUID;
 
-import static com.example.netcloudsharing.Fragment.MainActivity.binder;
+import static com.example.netcloudsharing.MainActivity.binder;
 
 public class CurrentPlayMusic extends AppCompatActivity implements View.OnClickListener {
 
@@ -115,7 +117,7 @@ public class CurrentPlayMusic extends AppCompatActivity implements View.OnClickL
                 while (binder.isMediaPlay()) {
                     try {
                         Message message = new Message();
-                        message.what = binder.getCurrentPosition();
+                        message.what = binder.getCurrentPositionInSong();
                         handler.sendMessage(message);
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
@@ -142,7 +144,7 @@ public class CurrentPlayMusic extends AppCompatActivity implements View.OnClickL
         if (bean != null) {
             songTitle.setText(bean.getSong());
             singer.setText(bean.getSinger());
-            MusicUtil.setAlbumImage(songImage, binder.getBitmap());
+            BaseTool.getBitmapFromUrl(this, songImage, bean.getPic(), 600);
         }
         if(isFavourMusic(binder.getMusicBean())){
            isFavourIv.setImageResource(R.drawable.ic_favorite_black_24dp);
@@ -169,11 +171,11 @@ public class CurrentPlayMusic extends AppCompatActivity implements View.OnClickL
                 }
             }
         }else{
-            int current_rid = bean.getRid();
+            String current_rid = bean.getRid();
             Cursor cursor = db.query(FavourListDBHelper.TABLE_NAME_FAVOURLIST, null, null, null, null, null, null);
             while (cursor.moveToNext()) {
-                int rid = cursor.getInt(5);
-                if (current_rid == rid) {
+                String rid = cursor.getString(5);
+                if (current_rid.equals(rid)) {
                     //已经是喜欢的音乐了，再次点击取消喜欢
                     cursor.close();
                     db.close();
@@ -226,6 +228,7 @@ public class CurrentPlayMusic extends AppCompatActivity implements View.OnClickL
             //Played
             binder.pauseMusic();
             songImage.clearAnimation();
+            songImage.setAnimation(animation);
             btnPlay.setBackgroundResource(R.drawable.ic_play_arrow_black_24dp);
         }
     }
@@ -283,11 +286,11 @@ public class CurrentPlayMusic extends AppCompatActivity implements View.OnClickL
 
         } else {
             //当前播放的音乐是网络音乐
-            int current_rid = musicBean.getRid();
+            String current_rid = musicBean.getRid();
             Cursor cursor = db.query(FavourListDBHelper.TABLE_NAME_FAVOURLIST, null, null, null, null, null, null);
             while (cursor.moveToNext()) {
-                int rid = cursor.getInt(5);
-                if (current_rid == rid) {
+                String rid = cursor.getString(5);
+                if (current_rid.equals(rid)) {
                     //已经是喜欢的音乐了，再次点击取消喜欢
                     db.delete(FavourListDBHelper.TABLE_NAME_FAVOURLIST, "rid=?", new String[]{String.valueOf(rid)});
                     isFavourIv.setImageResource(R.drawable.ic_favorite_border_black_24dp);

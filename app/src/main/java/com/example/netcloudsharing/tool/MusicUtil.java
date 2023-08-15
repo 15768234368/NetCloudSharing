@@ -85,7 +85,7 @@ public class MusicUtil {
         }
     }
 
-    public static String getUrlByNetMusicRid(int rid) {
+    public static String getUrlByNetMusicRid(String rid) {
         String url = null;
         OkHttpClient client = new OkHttpClient();
         String new_url = "http://www.kuwo.cn/api/v1/www/music/playUrl?mid=" + String.valueOf(rid) + "&type=convert_url";
@@ -152,5 +152,22 @@ public class MusicUtil {
             client.connectionPool().evictAll();
             client = null;
         }
+    }
+
+    public static String DurationToString(String duration){
+        if(duration == null) return null;
+        int time = Integer.parseInt(duration);
+        int minute = time / 60;
+        int second = time % 60;
+        return minute + ":" + second;
+    }
+
+    public static String DurationToStringByMiles(String duration){
+        if(duration == null) return null;
+        int time = Integer.parseInt(duration);
+        time = time / 1000;
+        int minute = time / 60;
+        int second = time % 60;
+        return minute + ":" + second;
     }
 }

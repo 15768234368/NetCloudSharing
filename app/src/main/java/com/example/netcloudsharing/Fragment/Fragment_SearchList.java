@@ -16,9 +16,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.netcloudsharing.LocalMusicAdapter;
+import com.example.netcloudsharing.adapter.LocalMusicAdapter;
 import com.example.netcloudsharing.Music.NetMusicInfoDBHelper;
-import com.example.netcloudsharing.MusicBean;
+import com.example.netcloudsharing.Bean.MusicBean;
 import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.diary.Permission;
 import com.example.netcloudsharing.tool.MusicUtil;
@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.netcloudsharing.Fragment.MainActivity.binder;
+import static com.example.netcloudsharing.MainActivity.binder;
 
 public class Fragment_SearchList extends Fragment {
     private Handler mHandler = new Handler();
@@ -137,7 +137,7 @@ public class Fragment_SearchList extends Fragment {
             String song_singer = cursor.getString(3);
             String song_album = cursor.getString(5);
             String time = cursor.getString(10);
-            int song_rid = cursor.getInt(1);
+            String song_rid = cursor.getString(1);
             String pic = cursor.getString(12);
             //将一行当中的数据封装到对象中
             MusicBean bean = new MusicBean(song_id, song_title, song_singer, song_album, time, song_rid, pic, true);

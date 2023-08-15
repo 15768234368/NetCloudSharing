@@ -53,13 +53,11 @@
         app:cardCornerRadius="10dp"
         app:cardElevation="1dp">
 
-
-        <FrameLayout
-            android:id="@+id/fragment_music_search_fl"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/musicSearch_rvList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </FrameLayout>
+            android:layout_height="wrap_content"
+            android:padding="5dp" />
     </androidx.cardview.widget.CardView>
 
     <include layout="@layout/music_buttom" />

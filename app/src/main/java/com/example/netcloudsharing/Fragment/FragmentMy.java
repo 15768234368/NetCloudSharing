@@ -17,20 +17,19 @@ import androidx.fragment.app.Fragment;
 
 import com.example.netcloudsharing.R;
 import com.example.netcloudsharing.activity.EditInfo;
-import com.example.netcloudsharing.activity.LoginActivity;
 import com.example.netcloudsharing.diary.MainActivity;
 import com.example.netcloudsharing.tool.MusicUtil;
 import com.example.netcloudsharing.tool.UserDao;
 import com.example.netcloudsharing.tool.Userinfo;
 
-import static com.example.netcloudsharing.Fragment.MainActivity.login_type;
+import static com.example.netcloudsharing.MainActivity.login_type;
 
 public class FragmentMy extends Fragment implements View.OnClickListener {
     private Button editInfo_btn;
     private ImageView userImage_iv;
     private TextView userName_tv, userAccount_tv, gender_tv, birthday_tv, constellation_tv;
     private TextView nowLive_tv, birthplace_tv, email_tv, info_tv;
-    String uid = com.example.netcloudsharing.Fragment.MainActivity.uid;
+    String uid = com.example.netcloudsharing.MainActivity.uid;
     View view;
     private Userinfo bean;
     private Userinfo curBean;
@@ -47,14 +46,10 @@ public class FragmentMy extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (login_type == 1) {
-            loadInfoData();
             init(view);
         }
     }
 
-    private void loadInfoData() {
-        bean = LoginActivity.bean;
-    }
 
     private void init(View view) {
         editInfo_btn = (Button) view.findViewById(R.id.fragment_my_btn_editInfo);

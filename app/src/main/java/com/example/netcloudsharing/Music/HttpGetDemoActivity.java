@@ -17,7 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
 
-import static com.example.netcloudsharing.Fragment.MainActivity.binder;
+import static com.example.netcloudsharing.MainActivity.binder;
 
 public class HttpGetDemoActivity extends Activity {
     /**
